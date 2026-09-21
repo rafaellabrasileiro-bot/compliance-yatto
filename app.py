@@ -1,12 +1,12 @@
-from datetime import datetime
 import re
+from datetime import datetime
 import fitz  # PyMuPDF
 import pandas as pd
 import streamlit as st
 
-# ==========================================
-# 1. CONFIGURAÇÃO DA PÁGINA & IDENTIDADE YATTÓ
-# ==========================================
+# ==============================================================================
+# 1. CONFIGURAÇÃO DA PÁGINA & ESTILO VISUAL YATTÓ
+# ==============================================================================
 st.set_page_config(
     page_title="Central de Compliance | Yattó",
     page_icon="♻️",
@@ -14,95 +14,154 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Estilização customizada Yattó
 st.markdown(
     """
     <style>
-    .main-header { font-size: 26px; font-weight: bold; color: #009bdb; }
-    .sub-header { font-size: 14px; color: #87868a; margin-bottom: 20px; }
-    .stButton>button { background-color: #009bdb; color: white; border-radius: 6px; font-weight: bold; }
+    /* Cores Yattó: Ciano #009bdb, Azul Navy #240085, Cinza #87868a */
+    .main-header { font-size: 26px; font-weight: bold; color: #009bdb; margin-bottom: 5px; }
+    .sub-header { font-size: 14px; color: #87868a; margin-bottom: 25px; }
+    
+    .stButton>button { 
+        background-color: #009bdb; 
+        color: white; 
+        border-radius: 6px; 
+        font-weight: bold; 
+        border: none;
+        padding: 8px 16px;
+    }
     .stButton>button:hover { background-color: #240085; color: white; }
-    .status-approved { background-color: #d4edda; color: #155724; padding: 6px 12px; border-radius: 4px; font-weight: bold; }
-    .status-pending { background-color: #fff3cd; color: #856404; padding: 6px 12px; border-radius: 4px; font-weight: bold; }
-    .status-rejected { background-color: #f8d7da; color: #721c24; padding: 6px 12px; border-radius: 4px; font-weight: bold; }
+    
+    .card-status {
+        padding: 15px;
+        border-radius: 8px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    .status-approved { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .status-partial { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+    .status-rejected { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
     </style>
 """,
     unsafe_allow_html=True,
 )
 
-# ==========================================
-# 2. DEFINIÇÃO DA MATRIZ DE REQUISITOS YATTÓ
-# ==========================================
+# ==============================================================================
+# 2. MATRIZ INTEGRADA DE REQUISITOS (INCLUINDO CARGILL / ÓLEO)
+# ==============================================================================
 REQUISITOS = {
-    "Cooperativa": {
-        "obrigatorios": [
+    "Operador Logístico de Óleo (Cargill)": {
+        "obrigatorios_base": [
             "Cartão CNPJ",
-            "Inscrição Estadual",
+            "Inscrição Estadual Ativa",
+            "Alvará de Funcionamento",
+            "Dispensa ou Licença Ambiental",
+            "Certificado de Regularidade IBAMA - CTF/APP",
+            "Plano de Atendimento a Emergências (PAE)",
+            "Licença Sanitária",
+        ],
+        "fiscais_cnd": [
+            "Certidão Negativa de Débitos Trabalhistas",
+            "CND Federal",
+            "CND Estadual",
+            "CND Municipal",
+            "Certificado de Regularidade do FGTS",
+        ],
+        "sst_seguranca": [
+            "AVCB ou CLCB",
+            "PGR - Plano de Gerenciamento de Riscos",
+            "PCMSO - Programa de Controle Médico de Saúde Ocupacional",
+            "Ficha de Entrega de EPI’s / ASOs",
+            "Certificado de Treinamento (NR01, NR06 e/ou NR12)",
+        ],
+        "especificos_operacao": [
+            "Relatório de Inspeção de Caldeiras",
+            "Certificado de Treinamento de Segurança na Operação de Caldeiras"
+            " (NR 13)",
+            "Certificado de Destinação Final da Borra Orgânica",
+            "Certificado de Destinação do PET para Reciclagem",
+            "Nota Fiscal de Venda do Óleo",
+            "Comprovante de Medidas Preventivas e Corretivas de Controle de Pragas",
+        ],
+    },
+    "Cooperativa": {
+        "obrigatorios_base": [
+            "Cartão CNPJ",
+            "Inscrição Estadual Ativa",
             "Alvará de Funcionamento",
             "Dispensa ou Licença Ambiental",
             "Estatuto",
             "Última Ata de Eleição",
-            "CND Trabalhista",
-            "CND Federal/Estadual/Municipal",
         ],
-        "opcionais": ["AVCB/CLCB", "CTF IBAMA"],
+        "fiscais_cnd": [
+            "CND Trabalhista",
+            "CND Federal",
+            "CND Estadual",
+            "CND Municipal",
+        ],
+        "sst_seguranca": ["AVCB ou CLCB"],
+        "especificos_operacao": ["Certificado de Regularidade IBAMA - CTF/APP"],
     },
     "Destinador": {
-        "obrigatorios": [
+        "obrigatorios_base": [
             "Cartão CNPJ",
-            "Inscrição Estadual",
+            "Inscrição Estadual Ativa",
             "Alvará de Funcionamento",
             "Dispensa ou Licença Ambiental",
-            "AVCB/CLCB",
-            "CTF IBAMA",
         ],
-        "opcionais": ["ISO 14001", "ISO 9001"],
+        "fiscais_cnd": ["CND Federal", "CND Estadual", "CND Municipal"],
+        "sst_seguranca": ["AVCB ou CLCB"],
+        "especificos_operacao": [
+            "Certificado de Regularidade IBAMA - CTF/APP",
+            "ISO 14001",
+            "ISO 9001",
+        ],
     },
     "Transportador PJ": {
-        "obrigatorios": [
+        "obrigatorios_base": [
             "Cartão CNPJ",
-            "Inscrição Estadual",
+            "Inscrição Estadual Ativa",
             "Alvará de Funcionamento",
             "Dispensa ou Licença Ambiental",
             "RNTRC ANTT",
-            "CNH",
-            "CRLV",
         ],
-        "opcionais": ["Termo LGPD", "ISO 14001"],
+        "fiscais_cnd": ["CND Federal"],
+        "sst_seguranca": ["CNH", "CRLV"],
+        "especificos_operacao": ["Termo LGPD"],
     },
     "Transportador PF": {
-        "obrigatorios": ["CNH", "CRLV", "RNTRC ANTT", "Termo LGPD"],
-        "opcionais": ["Comprovante de Residência"],
+        "obrigatorios_base": ["CNH", "CRLV", "RNTRC ANTT", "Termo LGPD"],
+        "fiscais_cnd": [],
+        "sst_seguranca": [],
+        "especificos_operacao": ["Comprovante de Residência"],
     },
     "Transportador (Resíduos Perigosos)": {
-        "obrigatorios": [
+        "obrigatorios_base": [
             "Cartão CNPJ",
-            "Inscrição Estadual",
+            "Inscrição Estadual Ativa",
             "Alvará de Funcionamento",
-            "CTF IBAMA",
+            "Certificado de Regularidade IBAMA - CTF/APP",
             "AATIPP",
             "Licença Ambiental Estadual",
             "RNTRC ANTT",
             "Seguro Ambiental / PAE",
-            "Treinamento MOPP",
-            "CRLV",
         ],
-        "opcionais": [
+        "fiscais_cnd": ["CND Federal"],
+        "sst_seguranca": ["CNH com MOPP", "CRLV"],
+        "especificos_operacao": [
             "ISO 14001",
-            "ISO 9001",
             "Ficha de Emergência",
             "Relatório Passivo Ambiental",
         ],
     },
 }
 
-# ==========================================
-# 3. FUNÇÕES DE LEITURA E VALIDAÇÃO DE PDF
-# ==========================================
+# ==============================================================================
+# 3. LEITURA DE PDFS & EXTRAÇÃO DE DADOS
+# ==============================================================================
 
 
 def extrair_texto_pdf(file_bytes):
-  """Extrai o texto contido nos arquivos PDF enviados."""
   try:
     doc = fitz.open(stream=file_bytes, filetype="pdf")
     texto = ""
@@ -114,14 +173,11 @@ def extrair_texto_pdf(file_bytes):
 
 
 def extrair_cnpjs(texto):
-  """Encontra padrões de CNPJ no texto extraído."""
   padrao = r"\b\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}\b"
-  cnpjs = re.findall(padrao, texto)
-  return list(set(cnpjs))
+  return list(set(re.findall(padrao, texto)))
 
 
 def extrair_datas(texto):
-  """Encontra possíveis datas de validade no PDF (DD/MM/AAAA)."""
   padrao = r"\b\d{2}/\d{2}/\d{4}\b"
   datas_str = re.findall(padrao, texto)
   datas_validas = []
@@ -130,60 +186,58 @@ def extrair_datas(texto):
   for d in datas_str:
     try:
       dt = datetime.strptime(d, "%d/%m/%Y")
-      # Filtra datas plausíveis de validade
       if dt.year >= hoje.year - 1 and dt.year <= hoje.year + 10:
         datas_validas.append(dt)
     except ValueError:
       continue
-
   return datas_validas
 
 
-def analisar_documentos(categoria, arquivos_uploaded):
-  """Executa o cruzamento das regras de compliance."""
-  reqs = REQUISITOS.get(categoria, {"obrigatorios": [], "opcionais": []})
-  documentos_encontrados = {}
+# ==============================================================================
+# 4. MOTOR DE ANÁLISE DE COMPLIANCE
+# ==============================================================================
+
+
+def analisar_documentos(categoria, arquivos_uploaded, selecionados_manuais):
+  reqs = REQUISITOS.get(categoria, {})
+
+  # Unifica todas as listas de requisitos da categoria
+  todos_obrigatorios = (
+      reqs.get("obrigatorios_base", [])
+      + reqs.get("fiscais_cnd", [])
+      + reqs.get("sst_seguranca", [])
+  )
+  especificos = reqs.get("especificos_operacao", [])
+  total_exigido = list(set(todos_obrigatorios + especificos))
+
+  docs_encontrados = list(selecionados_manuais)
   cnpjs_encontrados = []
   datas_vencimento = []
   relatorio_erros = []
 
-  # Leitura de cada PDF enviado
-  for uploaded_file in arquivos_uploaded:
-    nome_arquivo = uploaded_file.name
-    file_bytes = uploaded_file.read()
-    texto_pdf = extrair_texto_pdf(file_bytes)
+  # Processa os PDFs anexados
+  if arquivos_uploaded:
+    for uploaded_file in arquivos_uploaded:
+      nome = uploaded_file.name
+      texto = extrair_texto_pdf(uploaded_file.read())
 
-    # Coleta CNPJs e Datas
-    cnpjs_encontrados.extend(extrair_cnpjs(texto_pdf))
-    datas_vencimento.extend(extrair_datas(texto_pdf))
+      cnpjs_encontrados.extend(extrair_cnpjs(texto))
+      datas_vencimento.extend(extrair_datas(texto))
 
-    # Identificação de tipo de documento por palavras-chave no nome ou conteúdo
-    texto_low = (nome_arquivo + " " + texto_pdf).lower()
-    for doc_req in reqs["obrigatorios"] + reqs["opcionais"]:
-      # Mapeamento simplificado de termos
-      termo_chave = doc_req.lower().split()[0]
-      if termo_chave in texto_low:
-        documentos_encontrados[doc_req] = True
+      texto_busca = (nome + " " + texto).lower()
+      for doc in total_exigido:
+        termo = doc.lower().split()[0]
+        if termo in texto_busca and doc not in docs_encontrados:
+          docs_encontrados.append(doc)
 
-  # 1. Checagem de Documentos Obrigatórios
-  docs_faltantes = [
-      doc
-      for doc in reqs["obrigatorios"]
-      if doc not in documentos_encontrados
-  ]
-  if docs_faltantes:
-    relatorio_erros.append(
-        f"❌ Documentos Obrigatórios Faltantes: {', '.join(docs_faltantes)}"
-    )
-
-  # 2. Checagem de Divergência de CNPJ
+  # Checagem de Divergência de CNPJ
   cnpjs_unicos = list(set(cnpjs_encontrados))
   if len(cnpjs_unicos) > 1:
     relatorio_erros.append(
-        f"⚠️ Divergência de CNPJ detectada entre arquivos: {', '.join(cnpjs_unicos)}"
+        f"⚠️ Divergência de CNPJs nos PDFs: {', '.join(cnpjs_unicos)}"
     )
 
-  # 3. Checagem de Validade
+  # Checagem de Validades
   hoje = datetime.now()
   datas_vencidas = [d for d in datas_vencimento if d < hoje]
   datas_proximas = [
@@ -191,172 +245,234 @@ def analisar_documentos(categoria, arquivos_uploaded):
   ]
 
   if datas_vencidas:
-    datas_str = [d.strftime("%d/%m/%Y") for d in datas_vencidas]
-    relatorio_erros.append(
-        f"❌ Documento(s) com data VENCIDA identificada: {', '.join(datas_str)}"
-    )
+    str_venc = [d.strftime("%d/%m/%Y") for d in datas_vencidas]
+    relatorio_erros.append(f"❌ Documento(s) com data VENCIDA: {', '.join(str_venc)}")
 
   if datas_proximas:
-    datas_str = [d.strftime("%d/%m/%Y") for d in datas_proximas]
+    str_prox = [d.strftime("%d/%m/%Y") for d in datas_proximas]
     relatorio_erros.append(
-        f"⚠️ Documento(s) próximo(s) do vencimento (30 dias):"
-        f" {', '.join(datas_str)}"
+        f"⚠️ Documento(s) a vencer nos próximos 30 dias: {', '.join(str_prox)}"
     )
 
-  # Definir Status Final
-  if any("❌" in e for e in relatorio_erros):
-    status_final = "REPROVADO"
-  elif any("⚠️" in e for e in relatorio_erros) or len(
-      documentos_encontrados
-  ) < len(reqs["obrigatorios"]):
-    status_final = "PENDENTE"
+  # Cálculo de Progresso e Status
+  entregues = [d for d in total_exigido if d in docs_encontrados]
+  pendentes = [d for d in total_exigido if d not in docs_encontrados]
+
+  pct_conclusao = (
+      (len(entregues) / len(total_exigido) * 100) if total_exigido else 0
+  )
+
+  if datas_vencidas:
+    status_final = "REPROVADO (DOC VENCIDO)"
+  elif pct_conclusao == 100 and not relatorio_erros:
+    status_final = "HOMOLOGADO / APROVADO"
+  elif pct_conclusao > 0:
+    status_final = "EM HOMOLOGAÇÃO PARCIAL"
   else:
-    status_final = "APROVADO"
+    status_final = "AGUARDANDO DOCUMENTAÇÃO"
 
   return {
       "status": status_final,
+      "progresso": round(pct_conclusao, 1),
       "cnpjs": cnpjs_unicos,
-      "docs_presentes": list(documentos_encontrados.keys()),
+      "entregues": entregues,
+      "pendentes": pendentes,
       "erros": relatorio_erros,
-      "total_arquivos": len(arquivos_uploaded),
   }
 
 
-# ==========================================
-# 4. INTERFACE DO USUÁRIO (STREAMLIT)
-# ==========================================
+# ==============================================================================
+# 5. INTERFACE DO USUÁRIO (STREAMLIT)
+# ==============================================================================
 
 # Sidebar
 st.sidebar.image(
     "https://www.yatto.com.br/wp-content/uploads/2021/08/logo-yatto.png",
-    width=160,
+    width=150,
 )
 st.sidebar.title("Navegação")
 menu = st.sidebar.radio(
     "Ir para:",
     [
-        "Nova Análise de Documentos",
-        "Matriz de Requisitos (Checklist)",
-        "Sobre a Yattó",
+        "Central de Análises",
+        "Matriz de Requisitos Yattó",
+        "Sobre o Decreto 12.688/2025",
     ],
 )
 
-if menu == "Nova Análise de Documentos":
+if menu == "Central de Análises":
   st.markdown(
       '<div class="main-header">Central de Análises de Compliance</div>',
       unsafe_allow_html=True,
   )
   st.markdown(
-      '<div class="sub-header">Automação de verificação de documentação para'
-      " conformidade com o Decreto 12.688/2025</div>",
+      '<div class="sub-header">Validação automatizada e acompanhamento de'
+      " homologações parciais | Yattó</div>",
       unsafe_allow_html=True,
   )
 
-  col1, col2 = st.columns([1, 2])
+  col_left, col_right = st.columns([1.1, 1.9])
 
-  with col1:
-    st.subheader("1. Informações do Parceiro")
-    razao_social = st.text_input("Razão Social do Fornecedor")
+  with col_left:
+    st.subheader("1. Dados do Parceiro")
+    razao_social = st.text_input(
+        "Razão Social / Nome", placeholder="Ex: Operador Logístico Óleo Sp"
+    )
     categoria = st.selectbox("Categoria do Fornecedor", list(REQUISITOS.keys()))
 
     st.subheader("2. Anexo dos PDFs")
     arquivos = st.file_uploader(
-        "Selecione todos os arquivos PDF do fornecedor:",
-        type=["pdf"],
-        accept_multiple_files=True,
+        "Upload dos arquivos em PDF:", type=["pdf"], accept_multiple_files=True
     )
 
-    btn_analisar = st.button("🔍 Executar Verificação Automática")
+    st.subheader("3. Checklist Manual (Opcional)")
+    st.caption("Marque os documentos que você já conferiu manualmente:")
 
-  with col2:
-    st.subheader("3. Resultado da Auditoria")
+    reqs_cat = REQUISITOS[categoria]
+    todos_docs = list(
+        set(
+            reqs_cat.get("obrigatorios_base", [])
+            + reqs_cat.get("fiscais_cnd", [])
+            + reqs_cat.get("sst_seguranca", [])
+            + reqs_cat.get("especificos_operacao", [])
+        )
+    )
+
+    docs_manuais = []
+    for doc in todos_docs:
+      if st.checkbox(doc, key=f"chk_{doc}"):
+        docs_manuais.append(doc)
+
+    btn_analisar = st.button("🔍 Executar Análise de Compliance")
+
+  with col_right:
+    st.subheader("Parecer do Análise de Compliance")
 
     if btn_analisar:
       if not razao_social:
         st.warning(
-            "Por favor, informe a Razão Social do parceiro antes de analisar."
+            "Por favor, insira a Razão Social do fornecedor para prosseguir."
         )
-      elif not arquivos:
-        st.warning("Por favor, anexe ao menos um arquivo PDF para análise.")
       else:
-        with st.spinner("Lendo PDFs e cruzando regras de compliance..."):
-          resultado = analisar_documentos(categoria, arquivos)
+        with st.spinner("Analisando PDFs e cruzando requisitos..."):
+          res = analisar_documentos(categoria, arquivos, docs_manuais)
 
-        # Exibição do Status
-        st.write(f"**Parceiro:** {razao_social}")
+        # Header do Resultado
+        st.write(f"**Fornecedor:** {razao_social}")
         st.write(f"**Categoria:** {categoria}")
 
-        if resultado["status"] == "APROVADO":
-          st.success("✅ **STATUS FINAL: APROVADO**")
+        # Card de Status
+        status = res["status"]
+        if "APROVADO" in status:
+          st.markdown(
+              f'<div class="card-status'
+              f' status-approved">🟢 STATUS: {status}</div>',
+              unsafe_allow_html=True,
+          )
           st.balloons()
-        elif resultado["status"] == "PENDENTE":
-          st.warning("⚠️ **STATUS FINAL: PENDENTE / ATENÇÃO**")
+        elif "PARCIAL" in status:
+          st.markdown(
+              f'<div class="card-status status-partial">🟡 STATUS: {status}'
+              f' ({res["progresso"]}% Completo)</div>',
+              unsafe_allow_html=True,
+          )
         else:
-          st.error("❌ **STATUS FINAL: REPROVADO**")
-
-        st.markdown("---")
-        st.subheader("Detalhamento da Análise")
-
-        # Exibir CNPJs identificados
-        if resultado["cnpjs"]:
-          st.info(f"**CNPJ(s) Identificado(s):** {', '.join(resultado['cnpjs'])}")
-        else:
-          st.write("Nenhum CNPJ formatado encontrado nos PDFs.")
-
-        # Exibir Inconformidades / Alertas
-        if resultado["erros"]:
-          st.write("**Inconformidades e Observações:**")
-          for err in resultado["erros"]:
-            st.write(f"- {err}")
-        else:
-          st.write(
-              "✅ Nenhuma inconformidade de validade ou documentação foi"
-              " identificada."
+          st.markdown(
+              f'<div class="card-status status-rejected">🔴 STATUS:'
+              f" {status}</div>",
+              unsafe_allow_html=True,
           )
 
-        # Download do Relatório
-        relatorio_txt = (
-            f"PARECER DE COMPLIANCE YATTÓ\nData: {datetime.now().strftime('%d/%m/%Y %H:%M')}\n"
-            f"Parceiro: {razao_social}\nCategoria: {categoria}\nStatus:"
-            f" {resultado['status']}\n\nObservações:\n"
-            + "\n".join(resultado["erros"])
+        # Barra de Progresso
+        st.progress(res["progresso"] / 100)
+
+        # Alertas de Inconformidades
+        if res["erros"]:
+          st.markdown("### ⚠️ Inconformidades Detectadas")
+          for err in res["erros"]:
+            st.error(err)
+
+        # CNPJs
+        if res["cnpjs"]:
+          st.info(f"**CNPJ(s) Identificados nos PDFs:** {', '.join(res['cnpjs'])}")
+
+        # Documentação Recebida vs Pendente
+        c_ent, c_pend = st.columns(2)
+
+        with c_ent:
+          st.markdown("#### ✅ Documentos Entregues")
+          if res["entregues"]:
+            for d in res["entregues"]:
+              st.write(f"✓ {d}")
+          else:
+            st.write("*Nenhum documento identificado ainda.*")
+
+        with c_pend:
+          st.markdown("#### ⏳ Documentos Pendentes")
+          if res["pendentes"]:
+            for d in res["pendentes"]:
+              st.write(f"○ {d}")
+          else:
+            st.write("🎉 *Nenhuma pendência documental!*")
+
+        # Gerador de Texto para Resposta por E-mail
+        st.markdown("---")
+        st.markdown("### ✉️ Resposta Pronta para Envio")
+        texto_email = (
+            f"Prezados,\n\nRecebemos a documentação de compliance de"
+            f" {razao_social}.\n\n"
+            f"STATUS DA HOMOLOGAÇÃO: {res['status']} ({res['progresso']}%"
+            " concluído)\n\n"
+            f"DOCUMENTOS RECEBIDOS ({len(res['entregues'])}):\n"
+            + "\n".join([f"- {d}" for d in res["entregues"]])
+            + "\n\nPENDÊNCIAS PARA CONCLUIR A HOMOLOGAÇÃO"
+            f" ({len(res['pendentes'])}):\n"
+            + "\n".join([f"- {d}" for d in res["pendentes"]])
+            + "\n\nFicamos no aguardo dos itens pendentes para finalização do"
+            " cadastro.\n\nAtenciosamente,\nEquipe de Compliance Yattó"
+        )
+        st.text_area(
+            "Copie o texto abaixo para enviar ao parceiro:",
+            texto_email,
+            height=200,
         )
 
-        st.download_button(
-            label="📄 Baixar Parecer Técnico (TXT)",
-            data=relatorio_txt,
-            file_name=f"Parecer_Compliance_{razao_social.replace(' ', '_')}.txt",
-            mime="text/plain",
-        )
-
-elif menu == "Matriz de Requisitos (Checklist)":
-  st.title("Matriz de Requisitos de Compliance Yattó")
-  st.write(
-      "Documentos obrigatórios e opcionais exigidos conforme a categoria do"
-      " parceiro:"
-  )
+elif menu == "Matriz de Requisitos Yattó":
+  st.title("Matriz Geral de Requisitos de Compliance")
+  st.write("Consulte as exigências documentais divididas por categoria:")
 
   for cat, reqs in REQUISITOS.items():
     with st.expander(f"📌 {cat}"):
-      col_a, col_b = st.columns(2)
-      with col_a:
-        st.write("**Obrigatórios:**")
-        for doc in reqs["obrigatorios"]:
-          st.write(f"• {doc}")
-      with col_b:
-        st.write("**Opcionais:**")
-        for doc in reqs["opcionais"]:
-          st.write(f"• {doc}")
+      st.write(
+          "**Geral & Licenciamento:**",
+          ", ".join(reqs.get("obrigatorios_base", [])),
+      )
+      st.write(
+          "**Certidões & Fiscais:**", ", ".join(reqs.get("fiscais_cnd", []))
+      )
+      st.write(
+          "**SST / Segurança do Trabalho:**",
+          ", ".join(reqs.get("sst_seguranca", [])),
+      )
+      st.write(
+          "**Específicos / Operação:**",
+          ", ".join(reqs.get("especificos_operacao", [])),
+      )
 
-elif menu == "Sobre a Yattó":
-  st.title("Yattó - Infraestrutura de Economia Circular")
+elif menu == "Sobre o Decreto 12.688/2025":
+  st.title("Segurança Jurídica & Decreto nº 12.688/2025")
   st.write(
-      "A Yattó é a infraestrutura de soluções em economia circular para grandes"
-      " empresas, atuando de forma contínua e auditável em resíduos,"
-      " embalagens, conteúdo reciclado e governança."
+      "A Yattó atua como infraestrutura de soluções em economia circular"
+      " oferecendo diagnósticos, inteligência de dados e execução operacional"
+      " contínua."
   )
   st.write(
-      "Com a PNRS e o **Decreto nº 12.688/2025**, a comprovação de circularidade"
-      " exige dados auditáveis e segurança jurídica na homologação de toda a"
-      " cadeia de parceiros."
+      "Com a entrada em vigor do **Decreto nº 12.688/2025**, a exigência"
+      " regulatória mudou da simples compensação para a **comprovação de"
+      " circularidade com dados auditáveis**."
+  )
+  st.write(
+      "Garantir a conformidade documental de todos os parceiros, cooperativas,"
+      " destinadores e operadores logísticos é o pilar que elimina riscos de"
+      " sanção regulatória, multas e greenwashing."
   )

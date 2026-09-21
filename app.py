@@ -1,5 +1,7 @@
 import base64
+import io
 import re
+import zipfile
 from datetime import datetime
 import fitz  # PyMuPDF
 import pandas as pd
@@ -15,14 +17,11 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Imagem de Fundo Yattó convertida em Base64 para garantir carregamento
-BACKGROUND_B64 = """iVBORw0KGgoAAAANSUhEUgAAA8YAAAHRCAYAAACo3aDLAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAP+lSURBVHhe7N0HWBRH3wfwX/pSpSsgNkBQUBAVGxZs
-WRNLIjY0/mKMUYstUWPUaGJLL/42Y4s1GqPGXhDFXhBsqChFUR4sCNL7s7s3x1044O6O0f+/3/P8/e21+m3szszN3fA8"""
+BACKGROUND_B64 = """iVBORw0KGgoAAAANSUhEUgAAA8YAAAHRCAYAAACo3aDLAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAP+lSURBVHhe7N0HWBRH3wfwX/pSpSsgNkBQUBAVGxZsWRNLIjY0/mKMUYstUWPUaGJLL/42Y4s1GqPGXhDFXhBsqChFUR4sCNL7s7s3x1044O6O0f+/3/P8/e21+m3szszN3fA8"""
 
 st.markdown(
     f"""
     <style>
-    /* Aplicação da Imagem de Fundo Oficial Yattó */
     .stApp {{
         background: url("data:image/png;base64,{BACKGROUND_B64}") no-repeat center center fixed;
         background-size: cover;
@@ -33,7 +32,6 @@ st.markdown(
         background-size: cover;
     }}
     
-    /* Transparência dos blocos para visualização do fundo */
     div[data-testid="stSidebar"] {{
         background-color: rgba(244, 246, 248, 0.88);
         border-right: 2px solid #009BDB;
@@ -47,11 +45,9 @@ st.markdown(
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     }}
     
-    /* Cabeçalhos */
     .main-header {{ font-size: 26px; font-weight: bold; color: #009BDB; margin-bottom: 5px; }}
     .sub-header {{ font-size: 14px; color: #87868A; margin-bottom: 25px; }}
     
-    /* Botões */
     .stButton>button {{ 
         background-color: #009BDB; 
         color: #FFFFFF; 
@@ -66,7 +62,6 @@ st.markdown(
         color: #FFFFFF; 
     }}
     
-    /* Cartões de Status */
     .card-status {{
         padding: 15px;
         border-radius: 8px;
@@ -90,7 +85,6 @@ st.markdown(
         border: 1px solid #F5C6CB; 
     }}
 
-    /* Barra de Progresso */
     .stProgress > div > div > div > div {{
         background-color: #93BA1F;
     }}
@@ -208,7 +202,6 @@ REQUISITOS = {
     },
 }
 
-# Lista completa unificada de documentos
 TODOS_DOCUMENTOS_POSSIVEIS = sorted(list(set(
     doc
     for cat_data in REQUISITOS.values()
@@ -217,7 +210,7 @@ TODOS_DOCUMENTOS_POSSIVEIS = sorted(list(set(
 )))
 
 # ==============================================================================
-# 3. LEITURA DE PDFS & EXTRAÇÃO DE DADOS
+# 3. LEITURA DE PDFS, ZIPS & EXTRAÇÃO DE DADOS
 # ==============================================================================
 
 def extrair_texto_pdf(file_bytes):
@@ -229,6 +222,26 @@ def extrair_texto_pdf(file_bytes):
         return texto
     except Exception:
         return ""
+
+def processar_arquivos_upload(arquivos_uploaded):
+    """Extrai os arquivos do upload, descompactando arquivos .ZIP se houver."""
+    lista_pdfs = []
+    if arquivos_uploaded:
+        for file in arquivos_uploaded:
+            nome = file.name.lower()
+            bytes_content = file.read()
+            if nome.endswith(".zip"):
+                try:
+                    with zipfile.ZipFile(io.BytesIO(bytes_content)) as z:
+                        for filename in z.namelist():
+                            if filename.lower().endswith(".pdf") and not filename.startswith("__MACOSX"):
+                                pdf_bytes = z.read(filename)
+                                lista_pdfs.append((filename, pdf_bytes))
+                except Exception:
+                    pass
+            elif nome.endswith(".pdf"):
+                lista_pdfs.append((file.name, bytes_content))
+    return lista_pdfs
 
 def extrair_cnpjs(texto):
     padrao = r"\b\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}\b"
@@ -253,7 +266,7 @@ def extrair_datas(texto):
 # 4. MOTOR DE ANÁLISE DE COMPLIANCE
 # ==============================================================================
 
-def analisar_documentos(categoria, arquivos_uploaded, modo_analise, doc_especifico_selecionado):
+def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_selecionado):
     reqs = REQUISITOS.get(categoria, {})
 
     if modo_analise == "Análise Pontual (Documento Avulso)":
@@ -272,19 +285,17 @@ def analisar_documentos(categoria, arquivos_uploaded, modo_analise, doc_especifi
     datas_vencimento = []
     relatorio_erros = []
 
-    if arquivos_uploaded:
-        for uploaded_file in arquivos_uploaded:
-            nome = uploaded_file.name
-            texto = extrair_texto_pdf(uploaded_file.read())
+    for nome_pdf, pdf_bytes in lista_pdfs:
+        texto = extrair_texto_pdf(pdf_bytes)
 
-            cnpjs_encontrados.extend(extrair_cnpjs(texto))
-            datas_vencimento.extend(extrair_datas(texto))
+        cnpjs_encontrados.extend(extrair_cnpjs(texto))
+        datas_vencimento.extend(extrair_datas(texto))
 
-            texto_busca = (nome + " " + texto).lower()
-            for doc in total_exigido:
-                termo = doc.lower().split()[0]
-                if termo in texto_busca and doc not in docs_encontrados:
-                    docs_encontrados.append(doc)
+        texto_busca = (nome_pdf + " " + texto).lower()
+        for doc in total_exigido:
+            termo = doc.lower().split()[0]
+            if termo in texto_busca and doc not in docs_encontrados:
+                docs_encontrados.append(doc)
 
     cnpjs_unicos = list(set(cnpjs_encontrados))
     if len(cnpjs_unicos) > 1:
@@ -381,9 +392,9 @@ if menu == "Central de Análises":
         )
         categoria = st.selectbox("Categoria do Fornecedor", list(REQUISITOS.keys()))
 
-        st.subheader("3. Anexo dos PDFs")
+        st.subheader("3. Anexo dos Arquivos (.PDF ou .ZIP)")
         arquivos = st.file_uploader(
-            "Upload do(s) arquivo(s) em PDF:", type=["pdf"], accept_multiple_files=True
+            "Upload dos arquivos (PDFs ou pasta ZIP):", type=["pdf", "zip"], accept_multiple_files=True
         )
 
         btn_analisar = st.button("🔍 Executar Análise de Compliance")
@@ -398,89 +409,95 @@ if menu == "Central de Análises":
                 )
             elif not arquivos:
                 st.warning(
-                    "Por favor, faça o upload de pelo menos um arquivo PDF para analisar."
+                    "Por favor, faça o upload de pelo menos um arquivo PDF ou ZIP para analisar."
                 )
             else:
-                with st.spinner("Analisando PDFs e cruzando requisitos..."):
-                    res = analisar_documentos(
-                        categoria, arquivos, modo_analise, doc_especifico_selecionado
-                    )
-
-                st.write(f"**Fornecedor:** {razao_social}")
-                st.write(f"**Categoria:** {categoria}")
-                if modo_analise == "Análise Pontual (Documento Avulso)":
-                    st.write(f"**Documento Alvo:** {doc_especifico_selecionado}")
-
-                status = res["status"]
-                if "APROVADO" in status or "CONFORMIDADE" in status:
-                    st.markdown(
-                        f'<div class="card-status status-approved">🟢 STATUS: {status}</div>',
-                        unsafe_allow_html=True,
-                    )
-                    st.balloons()
-                elif "PARCIAL" in status:
-                    st.markdown(
-                        f'<div class="card-status status-partial">🟡 STATUS: {status} ({res["progresso"]}% Completo)</div>',
-                        unsafe_allow_html=True,
-                    )
-                else:
-                    st.markdown(
-                        f'<div class="card-status status-rejected">🔴 STATUS: {status}</div>',
-                        unsafe_allow_html=True,
-                    )
-
-                if modo_analise != "Análise Pontual (Documento Avulso)":
-                    st.progress(res["progresso"] / 100)
-
-                if res["erros"]:
-                    st.markdown("### ⚠️ Inconformidades Detectadas")
-                    for err in res["erros"]:
-                        st.error(err)
-
-                if res["cnpjs"]:
-                    st.info(f"**CNPJ(s) Identificados nos PDFs:** {', '.join(res['cnpjs'])}")
-
-                c_ent, c_pend = st.columns(2)
-
-                with c_ent:
-                    st.markdown("#### ✅ Documentos Validados")
-                    if res["entregues"]:
-                        for d in res["entregues"]:
-                            st.write(f"✓ {d}")
+                with st.spinner("Processando arquivos (PDF/ZIP) e analisando requisitos..."):
+                    lista_pdfs = processar_arquivos_upload(arquivos)
+                    
+                    if not lista_pdfs:
+                        st.error("Nenhum arquivo PDF válido foi encontrado no envio ou dentro do arquivo ZIP.")
                     else:
-                        st.write("*Nenhum documento validado ainda.*")
+                        res = analisar_documentos(
+                            categoria, lista_pdfs, modo_analise, doc_especifico_selecionado
+                        )
 
-                with c_pend:
-                    st.markdown("#### ⏳ Documentos Pendentes")
-                    if res["pendentes"]:
-                        for d in res["pendentes"]:
-                            st.write(f"○ {d}")
-                    else:
-                        st.write("🎉 *Nenhuma pendência para esta análise!*")
+                        st.write(f"**Fornecedor:** {razao_social}")
+                        st.write(f"**Categoria:** {categoria}")
+                        st.write(f"**PDFs Analisados:** {len(lista_pdfs)} arquivo(s)")
+                        if modo_analise == "Análise Pontual (Documento Avulso)":
+                            st.write(f"**Documento Alvo:** {doc_especifico_selecionado}")
 
-                st.markdown("---")
-                st.markdown("### ✉️ Resposta Pronta para Envio")
-                if modo_analise == "Análise Pontual (Documento Avulso)":
-                    texto_email = (
-                        f"Prezados,\n\nRealizamos a verificação pontual do documento ({doc_especifico_selecionado}) referente a {razao_social}.\n\n"
-                        f"STATUS DA VERIFICAÇÃO: {res['status']}\n\n"
-                        f"Atenciosamente,\nEquipe de Compliance Yattó"
-                    )
-                else:
-                    texto_email = (
-                        f"Prezados,\n\nRecebemos a documentação de compliance de {razao_social}.\n\n"
-                        f"STATUS DA HOMOLOGAÇÃO: {res['status']} ({res['progresso']}% concluído)\n\n"
-                        f"DOCUMENTOS RECEBIDOS ({len(res['entregues'])}):\n"
-                        + "\n".join([f"- {d}" for d in res["entregues"]])
-                        + f"\n\nPENDÊNCIAS PARA CONCLUIR A HOMOLOGAÇÃO ({len(res['pendentes'])}):\n"
-                        + "\n".join([f"- {d}" for d in res["pendentes"]])
-                        + "\n\nFicamos no aguardo dos itens pendentes para finalização do cadastro.\n\nAtenciosamente,\nEquipe de Compliance Yattó"
-                    )
-                st.text_area(
-                    "Copie o texto abaixo para enviar ao parceiro:",
-                    texto_email,
-                    height=200,
-                )
+                        status = res["status"]
+                        if "APROVADO" in status or "CONFORMIDADE" in status:
+                            st.markdown(
+                                f'<div class="card-status status-approved">🟢 STATUS: {status}</div>',
+                                unsafe_allow_html=True,
+                            )
+                            st.balloons()
+                        elif "PARCIAL" in status:
+                            st.markdown(
+                                f'<div class="card-status status-partial">🟡 STATUS: {status} ({res["progresso"]}% Completo)</div>',
+                                unsafe_allow_html=True,
+                            )
+                        else:
+                            st.markdown(
+                                f'<div class="card-status status-rejected">🔴 STATUS: {status}</div>',
+                                unsafe_allow_html=True,
+                            )
+
+                        if modo_analise != "Análise Pontual (Documento Avulso)":
+                            st.progress(res["progresso"] / 100)
+
+                        if res["erros"]:
+                            st.markdown("### ⚠️ Inconformidades Detectadas")
+                            for err in res["erros"]:
+                                st.error(err)
+
+                        if res["cnpjs"]:
+                            st.info(f"**CNPJ(s) Identificados nos PDFs:** {', '.join(res['cnpjs'])}")
+
+                        c_ent, c_pend = st.columns(2)
+
+                        with c_ent:
+                            st.markdown("#### ✅ Documentos Validados")
+                            if res["entregues"]:
+                                for d in res["entregues"]:
+                                    st.write(f"✓ {d}")
+                            else:
+                                st.write("*Nenhum documento validado ainda.*")
+
+                        with c_pend:
+                            st.markdown("#### ⏳ Documentos Pendentes")
+                            if res["pendentes"]:
+                                for d in res["pendentes"]:
+                                    st.write(f"○ {d}")
+                            else:
+                                st.write("🎉 *Nenhuma pendência para esta análise!*")
+
+                        st.markdown("---")
+                        st.markdown("### ✉️ Resposta Pronta para Envio")
+                        if modo_analise == "Análise Pontual (Documento Avulso)":
+                            texto_email = (
+                                f"Prezados,\n\nRealizamos a verificação pontual do documento ({doc_especifico_selecionado}) referente a {razao_social}.\n\n"
+                                f"STATUS DA VERIFICAÇÃO: {res['status']}\n\n"
+                                f"Atenciosamente,\nEquipe de Compliance Yattó"
+                            )
+                        else:
+                            texto_email = (
+                                f"Prezados,\n\nRecebemos a documentação de compliance de {razao_social}.\n\n"
+                                f"STATUS DA HOMOLOGAÇÃO: {res['status']} ({res['progresso']}% concluído)\n\n"
+                                f"DOCUMENTOS RECEBIDOS ({len(res['entregues'])}):\n"
+                                + "\n".join([f"- {d}" for d in res["entregues"]])
+                                + f"\n\nPENDÊNCIAS PARA CONCLUIR A HOMOLOGAÇÃO ({len(res['pendentes'])}):\n"
+                                + "\n".join([f"- {d}" for d in res["pendentes"]])
+                                + "\n\nFicamos no aguardo dos itens pendentes para finalização do cadastro.\n\nAtenciosamente,\nEquipe de Compliance Yattó"
+                            )
+                        st.text_area(
+                            "Copie o texto abaixo para enviar ao parceiro:",
+                            texto_email,
+                            height=200,
+                        )
 
 elif menu == "Matriz de Requisitos Yattó":
     st.title("Matriz Geral de Requisitos de Compliance")

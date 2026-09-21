@@ -12,7 +12,7 @@ import streamlit as st
 # ==============================================================================
 st.set_page_config(
     page_title="Central de Análises Documentais | Yattó",
-    page_icon="♻️",
+    page_icon="📄",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -570,7 +570,7 @@ if menu == "Central de Análises":
         modo_analise = st.radio(
             "Selecione o escopo da verificação:",
             [
-                "Análise Completa / Homologação (Vários documentos)",
+                "Análise Completa / Homologação (Vários Documentos)",
                 "Análise Pontual (Documento Avulso)",
             ],
         )

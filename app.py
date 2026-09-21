@@ -94,10 +94,19 @@ st.markdown(
 )
 
 # ==============================================================================
-# 2. MATRIZ INTEGRADA DE REQUISITOS (SISTEMA DE CRITICIDADE CARGILL REVOLUTION)
+# 2. MATRIZ INTEGRADA DE REQUISITOS (CHAVES SEM EMOJIS / EMOJIS PARA EXIBIÇÃO)
 # ==============================================================================
+EMOJIS_CATEGORIAS = {
+    "Cooperativas": "🤝",
+    "Destinador": "📦",
+    "Transportador - Pessoa Jurídica": "🚛",
+    "Transportador - Pessoa Física": "🚛",
+    "Transportador (Resíduos Perigosos)": "☢️",
+    "Operador Logístico de Óleo (Cargill)": "🛢️"
+}
+
 REQUISITOS = {
-    "🤝 Cooperativas": {
+    "Cooperativas": {
         "obrigatorios": [
             "Cartão CNPJ",
             "Inscrição Estadual Ativa",
@@ -116,7 +125,7 @@ REQUISITOS = {
         ],
         "criticidade": {}
     },
-    "📦 Destinador": {
+    "Destinador": {
         "obrigatorios": [
             "Cartão CNPJ",
             "Inscrição Estadual Ativa",
@@ -131,7 +140,7 @@ REQUISITOS = {
         ],
         "criticidade": {}
     },
-    "🚛 Transportador - Pessoa Jurídica": {
+    "Transportador - Pessoa Jurídica": {
         "obrigatorios": [
             "Cartão CNPJ",
             "Inscrição Estadual Ativa",
@@ -144,7 +153,7 @@ REQUISITOS = {
         "opcionais": [],
         "criticidade": {}
     },
-    "🚛 Transportador - Pessoa Física": {
+    "Transportador - Pessoa Física": {
         "obrigatorios": [
             "Carteira Nacional de Habilitação (CNH)",
             "Licenciamento do Veículo (CRLV)",
@@ -154,7 +163,7 @@ REQUISITOS = {
         "opcionais": [],
         "criticidade": {}
     },
-    "☢️ Transportador (Resíduos Perigosos)": {
+    "Transportador (Resíduos Perigosos)": {
         "obrigatorios": [
             "Cartão CNPJ",
             "Inscrição Estadual Ativa",
@@ -175,7 +184,7 @@ REQUISITOS = {
         ],
         "criticidade": {}
     },
-    "🛢️ Operador Logístico de Óleo (Cargill)": {
+    "Operador Logístico de Óleo (Cargill)": {
         "obrigatorios": [
             "Alvará de Funcionamento",
             "Licença Sanitária",
@@ -569,20 +578,23 @@ elif menu == "Matriz de Requisitos Yattó":
     st.write("Consulte as exigências documentais divididas por categoria:")
 
     for cat, reqs in REQUISITOS.items():
-        with st.expander(f"{cat}"):
-            st.write(
-                "**Documentos Obrigatórios:**",
-                ", ".join(reqs.get("obrigatorios", [])) if reqs.get("obrigatorios") else "Nenhum"
-            )
-            if reqs.get("opcionais"):
-                st.write(
-                    "**Documentos Opcionais:**",
-                    ", ".join(reqs.get("opcionais", []))
-                )
+        emoji = EMOJIS_CATEGORIAS.get(cat, "")
+        titulo_expander = f"{emoji} {cat}" if emoji else cat
+        with st.expander(titulo_expander):
             if reqs.get("criticidade"):
                 st.markdown("**Níveis de Criticidade de Risco:**")
                 for nivel, docs in reqs["criticidade"].items():
                     st.write(f"- **{nivel}:** {', '.join(docs)}")
+            else:
+                st.write(
+                    "**Documentos Obrigatórios:**",
+                    ", ".join(reqs.get("obrigatorios", [])) if reqs.get("obrigatorios") else "Nenhum"
+                )
+                if reqs.get("opcionais"):
+                    st.write(
+                        "**Documentos Opcionais:**",
+                        ", ".join(reqs.get("opcionais", []))
+                    )
 
 elif menu == "Sobre o Decreto 12.688/2025":
     st.title("Segurança Jurídica & Decreto nº 12.688/2025")

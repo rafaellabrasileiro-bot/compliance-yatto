@@ -8,7 +8,7 @@ import pandas as pd
 import streamlit as st
 
 # ==============================================================================
-# 1. CONFIGURAÇÃO DA PÁGINA & ESTILO VISUAL YATTÓ COM IMAGEM DE FUNDO EMBUTIDA
+# 1. CONFIGURAÇÃO DA PÁGINA & ESTILO VISUAL YATTÓ
 # ==============================================================================
 st.set_page_config(
     page_title="Central de Compliance | Yattó",
@@ -94,7 +94,7 @@ st.markdown(
 )
 
 # ==============================================================================
-# 2. MATRIZ INTEGRADA DE REQUISITOS (CHAVES SEM EMOJIS / EMOJIS PARA EXIBIÇÃO)
+# 2. MATRIZ INTEGRADA DE REQUISITOS E FAMÍLIAS DE CNAE COMPATÍVEIS
 # ==============================================================================
 EMOJIS_CATEGORIAS = {
     "Cooperativas": "🤝",
@@ -103,6 +103,17 @@ EMOJIS_CATEGORIAS = {
     "Transportador - Pessoa Física": "🚛",
     "Transportador (Resíduos Perigosos)": "☢️",
     "Operador Logístico de Óleo (Cargill)": "🛢️"
+}
+
+# Dicionário de CNAEs de Referência para Análise Contextual
+FAMILIAS_CNAE = {
+    "COLETA_RECURSOS": ["3811", "3812"],
+    "RECUPERACAO_MATERIAIS": ["3831", "3832", "3839"],
+    "TRATAMENTO_DISPOSICAO": ["3821", "3822"],
+    "COMERCIO_SUCATAS": ["4687"],
+    "TRANSPORTE_CARGAS": ["4930"],
+    "ARMAZENAGEM_LOGISTICA": ["5211", "5212", "5229", "5250"],
+    "INDUSTRIA_TRANSFORMACAO": ["2221", "2222", "2223", "2229", "2013", "2019"]
 }
 
 REQUISITOS = {
@@ -255,6 +266,41 @@ TODOS_DOCUMENTOS_POSSIVEIS = sorted(list(set(
     for doc in lista_docs
 )))
 
+# MAPEIRO DE ATIVIDADES OPERACIONAIS POR CATEGORIA
+OPCOES_ATIVIDADES_POR_CATEGORIA = {
+    "Cooperativas": [
+        "Recepção, Triagem e Comercialização de Recicláveis",
+        "Prensagem, Enfardamento e Preparação de Materiais",
+        "Coleta de Resíduos Não Perigosos",
+        "Armazenamento de Materiais Recicláveis",
+        "Transporte Próprio de Resíduos"
+    ],
+    "Destinador": [
+        "Recuperação / Trituração / Moagem / Granulagem de Plásticos",
+        "Recuperação de Materiais Metálicos e Outros Resíduos",
+        "Tratamento e Disposição Final de Resíduos Não Perigosos",
+        "Tratamento e Disposição Final de Resíduos Perigosos",
+        "Indústria de Transformação (Fabricação de produtos com matéria reciclada)"
+    ],
+    "Transportador - Pessoa Jurídica": [
+        "Transporte Rodoviário de Cargas em Geral",
+        "Coleta e Transporte de Resíduos Não Perigosos",
+        "Coleta e Transporte de Resíduos Perigosos"
+    ],
+    "Transportador - Pessoa Física": [
+        "Transporte Autônomo de Cargas"
+    ],
+    "Transportador (Resíduos Perigosos)": [
+        "Transporte Rodoviário de Produtos / Resíduos Perigosos (MOPP)"
+    ],
+    "Operador Logístico de Óleo (Cargill)": [
+        "Armazenamento / Depósito de Mercadorias de Terceiros",
+        "Carga, Descarga e Movimentação de Cargas",
+        "Organização Logística do Transporte e Agenciamento",
+        "Operação Logística Integrada com Transporte Próprio"
+    ]
+}
+
 # ==============================================================================
 # 3. LEITURA DE PDFS, ZIPS & EXTRAÇÃO INTELIGENTE DE DADOS
 # ==============================================================================
@@ -292,6 +338,17 @@ def extrair_cnpjs(texto):
     padrao = r"\b\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}\b"
     return list(set(re.findall(padrao, texto)))
 
+def extrair_cnaes(texto):
+    """Extrai códigos no formato CNAE 00.00-0-00 ou 0000-0/00"""
+    padrao = r"\b\d{4}-\d/\d{2}\b|\b\d{2}\.\d{2}-\d-\d{2}\b"
+    encontrados = re.findall(padrao, texto)
+    cnaes_limpos = []
+    for c in encontrados:
+        c_clean = re.sub(r"\D", "", c)
+        if len(c_clean) >= 4:
+            cnaes_limpos.append(c_clean[:4]) # Pega os 4 primeiros dígitos do grupo/família
+    return list(set(cnaes_limpos))
+
 def extrair_datas_validade(texto):
     linhas = texto.split("\n")
     datas_vencimento = []
@@ -312,10 +369,45 @@ def extrair_datas_validade(texto):
     return datas_vencimento
 
 # ==============================================================================
-# 4. MOTOR DE ANÁLISE DE COMPLIANCE
+# 4. MOTOR DE ANÁLISE DE COMPLIANCE & AVALIAÇÃO DE CNAE
 # ==============================================================================
 
-def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_selecionado):
+def avaliar_compatibilidade_cnae(cnaes_encontrados, atividades_selecionadas):
+    """
+    Avalia a compatibilidade dos CNAEs encontrados (principal/secundários)
+    com as atividades efetivamente realizadas.
+    """
+    if not cnaes_encontrados:
+        return "🟡 Necessita validação", "Nenhum código CNAE formatado foi extraído automaticamente do Cartão CNPJ. Requer conferência visual."
+
+    familias_encontradas = set(cnaes_encontrados)
+    
+    cnaes_alvo = set()
+    for ativ in atividades_selecionadas:
+        if "Coleta" in ativ:
+            cnaes_alvo.update(FAMILIAS_CNAE["COLETA_RECURSOS"])
+        if "Recuperação" in ativ or "Prensagem" in ativ or "Triagem" in ativ:
+            cnaes_alvo.update(FAMILIAS_CNAE["RECUPERACAO_MATERIAIS"])
+            cnaes_alvo.update(FAMILIAS_CNAE["COMERCIO_SUCATAS"])
+        if "Tratamento" in ativ or "Disposição" in ativ:
+            cnaes_alvo.update(FAMILIAS_CNAE["TRATAMENTO_DISPOSICAO"])
+        if "Transporte" in ativ:
+            cnaes_alvo.update(FAMILIAS_CNAE["TRANSPORTE_CARGAS"])
+        if "Armazenamento" in ativ or "Carga" in ativ or "Logística" in ativ:
+            cnaes_alvo.update(FAMILIAS_CNAE["ARMAZENAGEM_LOGISTICA"])
+        if "Indústria de Transformação" in ativ:
+            cnaes_alvo.update(FAMILIAS_CNAE["INDUSTRIA_TRANSFORMACAO"])
+
+    intersecao = familias_encontradas.intersection(cnaes_alvo)
+
+    if intersecao:
+        return "🟢 Compatível", f"Foram identificados CNAEs ({', '.join(intersecao)}) diretamente compatíveis com as atividades operacionais declaradas."
+    elif familias_encontradas.intersection(set(FAMILIAS_CNAE["INDUSTRIA_TRANSFORMACAO"])):
+        return "🟡 Necessita validação", "Identificado CNAE de Indústria de Transformação. Requer validação conjunta com a Licença Ambiental."
+    else:
+        return "🟡 Necessita validação", f"Os CNAEs identificados no texto do CNPJ ({', '.join(familias_encontradas)}) não apresentaram correspondência automática exata com o escopo selecionado. Requer verificação visual do Cartão CNPJ."
+
+def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_selecionado, atividades_selecionadas):
     reqs = REQUISITOS.get(categoria, {})
 
     if modo_analise == "Análise Pontual (Documento Avulso)":
@@ -329,6 +421,7 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
 
     docs_encontrados = []
     cnpjs_encontrados = []
+    cnaes_encontrados = []
     datas_vencimento = []
     relatorio_erros = []
 
@@ -336,6 +429,7 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
         texto = extrair_texto_pdf(pdf_bytes)
 
         cnpjs_encontrados.extend(extrair_cnpjs(texto))
+        cnaes_encontrados.extend(extrair_cnaes(texto))
         datas_vencimento.extend(extrair_datas_validade(texto))
 
         texto_busca = (nome_pdf + " " + texto).lower()
@@ -345,6 +439,10 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
                 docs_encontrados.append(doc)
 
     cnpjs_unicos = list(set(cnpjs_encontrados))
+    cnaes_unicos = list(set(cnaes_encontrados))
+
+    # Avaliação do CNPJ e CNAE
+    status_cnae, parecer_cnae = avaliar_compatibilidade_cnae(cnaes_unicos, atividades_selecionadas)
 
     hoje = datetime.now()
     datas_vencidas = [d for d in datas_vencimento if d < hoje]
@@ -382,7 +480,7 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
     else:
         if datas_vencidas or pendencias_criticas.get("Grave"):
             status_final = "REPROVADO / RISCO GRAVE"
-        elif pct_conclusao == 100 and not relatorio_erros:
+        elif pct_conclusao == 100 and not relatorio_erros and "Compatível" in status_cnae:
             status_final = "HOMOLOGADO / APROVADO"
         elif pct_conclusao > 0:
             status_final = "EM HOMOLOGAÇÃO PARCIAL"
@@ -393,6 +491,9 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
         "status": status_final,
         "progresso": round(pct_conclusao, 1),
         "cnpjs": cnpjs_unicos,
+        "cnaes": cnaes_unicos,
+        "status_cnae": status_cnae,
+        "parecer_cnae": parecer_cnae,
         "obrig_entregues": obrig_entregues,
         "obrig_pendentes": obrig_pendentes,
         "opc_entregues": opc_entregues,
@@ -449,6 +550,14 @@ if menu == "Central de Análises":
         )
         categoria = st.selectbox("Categoria do Fornecedor", list(REQUISITOS.keys()))
 
+        # Mapeamento dinâmico da Atividade Efetivamente Realizada
+        atividades_opcoes = OPCOES_ATIVIDADES_POR_CATEGORIA.get(categoria, [])
+        atividades_selecionadas = st.multiselect(
+            "Atividade(s) efetivamente realizada(s) na operação:",
+            atividades_opcoes,
+            default=[atividades_opcoes[0]] if atividades_opcoes else []
+        )
+
         st.subheader("3. Anexo dos Arquivos (.PDF ou .ZIP)")
         arquivos = st.file_uploader(
             "Upload dos arquivos (PDFs ou pasta ZIP):", type=["pdf", "zip"], accept_multiple_files=True
@@ -476,7 +585,7 @@ if menu == "Central de Análises":
                         st.error("Nenhum arquivo PDF válido foi encontrado no envio ou dentro do arquivo ZIP.")
                     else:
                         res = analisar_documentos(
-                            categoria, lista_pdfs, modo_analise, doc_especifico_selecionado
+                            categoria, lista_pdfs, modo_analise, doc_especifico_selecionado, atividades_selecionadas
                         )
 
                         st.write(f"**Fornecedor:** {razao_social}")
@@ -506,13 +615,19 @@ if menu == "Central de Análises":
                         if modo_analise != "Análise Pontual (Documento Avulso)":
                             st.progress(res["progresso"] / 100)
 
+                        # Painel Dedicado à Análise de CNPJ / CNAE
+                        st.markdown("---")
+                        st.markdown("### 🏢 Análise de CNPJ & Compatibilidade de CNAE")
+                        st.write(f"**Resultado:** {res['status_cnae']}")
+                        st.info(res['parecer_cnae'])
+
                         if res["erros"]:
                             st.markdown("### ⚠️ Inconformidades Detectadas")
                             for err in res["erros"]:
                                 st.error(err)
 
                         if res["cnpjs"]:
-                            st.info(f"**CNPJ(s) Mapeados nos PDFs:** {', '.join(res['cnpjs'])}")
+                            st.caption(f"CNPJ(s) Mapeados nos PDFs: {', '.join(res['cnpjs'])}")
 
                         c_ent, c_pend = st.columns(2)
 
@@ -554,12 +669,14 @@ if menu == "Central de Análises":
                             texto_email = (
                                 f"Prezados,\n\nRealizamos a verificação pontual do documento ({doc_especifico_selecionado}) referente a {razao_social}.\n\n"
                                 f"STATUS DA VERIFICAÇÃO: {res['status']}\n\n"
+                                f"PARECER CNPJ/CNAE: {res['status_cnae']} - {res['parecer_cnae']}\n\n"
                                 f"Atenciosamente,\nEquipe de Compliance Yattó"
                             )
                         else:
                             texto_email = (
                                 f"Prezados,\n\nRecebemos a documentação de compliance de {razao_social}.\n\n"
                                 f"STATUS DA HOMOLOGAÇÃO: {res['status']} ({res['progresso']}% concluído)\n\n"
+                                f"PARECER DA ANÁLISE DE CNAE: {res['status_cnae']}\n\n"
                                 f"DOCUMENTOS OBRIGATÓRIOS RECEBIDOS ({len(res['obrig_entregues'])}):\n"
                                 + "\n".join([f"- {d}" for d in res["obrig_entregues"]])
                                 + (f"\n\nDOCUMENTOS OPCIONAIS RECEBIDOS:\n" + "\n".join([f"- {d}" for d in res["opc_entregues"]]) if res["opc_entregues"] else "")

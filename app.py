@@ -310,10 +310,10 @@ def analisar_documentos(categoria, arquivos_uploaded, selecionados_manuais):
 # 5. INTERFACE DO USUÁRIO (STREAMLIT)
 # ==============================================================================
 
-# Imagem do logotipo oficial da Yattó hospedada no servidor web do site oficial
-st.sidebar.image(
-    "https://www.yatto.com.br/wp-content/uploads/2021/08/logo-yatto.png",
-    use_container_width=True,
+# Inserção da imagem via HTML da URL especificada
+st.sidebar.markdown(
+    '<div style="text-align: center; padding-bottom: 15px;"><img src="https://interested-red-r9gaj0nf.edgeone.dev/" style="max-width: 100%; height: auto;"></div>',
+    unsafe_allow_html=True
 )
 
 st.sidebar.title("Navegação")

@@ -310,16 +310,11 @@ def analisar_documentos(categoria, arquivos_uploaded, selecionados_manuais):
 # 5. INTERFACE DO USUÁRIO (STREAMLIT)
 # ==============================================================================
 
-# Exibição do Logo Yattó via HTML limpo para evitar problemas de carregamento
-logo_html = """
-<div style="text-align: center; padding: 10px 0 20px 0;">
-    <img src="https://raw.githubusercontent.com/yatto-oficial/assets/main/logo_yatto.png" 
-         onerror="this.onerror=null; this.src='https://yatto.com.br/wp-content/uploads/2021/08/logo-yatto.png';"
-         alt="Yattó Economia Circular" 
-         style="max-width: 90%; height: auto;">
-</div>
-"""
-st.sidebar.markdown(logo_html, unsafe_allow_html=True)
+# Imagem do logotipo oficial da Yattó hospedada no servidor web do site oficial
+st.sidebar.image(
+    "https://www.yatto.com.br/wp-content/uploads/2021/08/logo-yatto.png",
+    use_container_width=True,
+)
 
 st.sidebar.title("Navegação")
 menu = st.sidebar.radio(

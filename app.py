@@ -8,7 +8,7 @@ import pandas as pd
 import streamlit as st
 
 # ==============================================================================
-# 1. CONFIGURAÇÃO DA PÁGINA & ESTILO VISUAL INSPIRADO NO SITE YATTÓ
+# 1. CONFIGURAÇÃO DA PÁGINA & ESTILO VISUAL LIMPO YATTÓ
 # ==============================================================================
 st.set_page_config(
     page_title="Central de Compliance | Yattó",
@@ -17,58 +17,76 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Imagem de Fundo embutida em Base64 (estilo institucional yatto.com.br)
-BACKGROUND_B64 = """iVBORw0KGgoAAAANSUhEUgAAA8YAAAHRCAYAAACo3aDLAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAP+lSURBVHhe7N0HWBRH3wfwX/pSpSsgNkBQUBAVGxZsWRNLIjY0/mKMUYstUWPUaGJLL/42Y4s1GqPGXhDFXhBsqChFUR4sCNL7s7s3x1044O6O0f+/3/P8/e21+m3szszN3fA8"""
-
 st.markdown(
-    f"""
+    """
     <style>
-    /* Estilo de fundo da aplicação principal */
-    .stApp {{
-        background: url("data:image/png;base64,{BACKGROUND_B64}") no-repeat center center fixed !important;
-        background-size: cover !important;
-    }}
+    /* Estilo de fundo do aplicativo inteiro (Branco Limpo) */
+    .stApp {
+        background-color: #FFFFFF !important;
+    }
+
+    [data-testid="stAppViewContainer"] {
+        background-color: #FFFFFF !important;
+    }
 
     /* Barra lateral de Navegação (Sidebar) com FUNDO EXCLUSIVAMENTE BRANCO */
-    section[data-testid="stSidebar"] {{
+    section[data-testid="stSidebar"], div[data-testid="stSidebar"] {
         background-color: #FFFFFF !important;
         background-image: none !important;
         border-right: 2px solid #009BDB;
-    }}
+    }
 
-    section[data-testid="stSidebar"] > div:first-child {{
+    section[data-testid="stSidebar"] > div:first-child {
         background-color: #FFFFFF !important;
-    }}
+    }
 
-    /* Container do Logotipo na Sidebar */
-    .logo-container {{
+    /* Container do Logotipo Superior na Sidebar */
+    .logo-container {
         text-align: center;
         padding: 10px;
         background-color: #FFFFFF;
         border-radius: 8px;
         margin-bottom: 20px;
-    }}
+    }
 
-    .logo-container img {{
+    .logo-container img {
         max-width: 100%;
         height: auto;
-    }}
+    }
 
-    /* Cartões de verificação com fundo GRADIENTE suave da Yattó (Elementor) */
-    .stMainBlockContainer {{
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 248, 255, 0.93) 50%, rgba(245, 250, 240, 0.95) 100%) !important;
+    /* Cartões de verificação com fundo branco e bordas suaves Yattó */
+    .stMainBlockContainer {
+        background-color: #FFFFFF !important;
         border-radius: 12px;
         padding: 25px;
         margin-top: 15px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-        border: 1px solid rgba(0, 155, 219, 0.15);
-    }}
+        box-shadow: 0 4px 20px rgba(0, 155, 219, 0.08);
+        border: 1px solid rgba(0, 155, 219, 0.2);
+    }
     
-    .main-header {{ font-size: 26px; font-weight: bold; color: #009BDB; margin-bottom: 5px; }}
-    .sub-header {{ font-size: 14px; color: #87868A; margin-bottom: 25px; }}
+    /* Logotipo da Yattó no Canto Inferior Direito (Fixado e Ligeiramente Inclinado/Tortinho) */
+    .watermark-bottom-right {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        width: 180px;
+        z-index: 9999;
+        opacity: 0.85;
+        transform: rotate(-6deg);
+        pointer-events: none;
+        transition: all 0.3s ease;
+    }
+
+    .watermark-bottom-right img {
+        width: 100%;
+        height: auto;
+    }
+
+    .main-header { font-size: 26px; font-weight: bold; color: #009BDB; margin-bottom: 5px; }
+    .sub-header { font-size: 14px; color: #87868A; margin-bottom: 25px; }
     
     /* Botões Yattó */
-    .stButton>button {{ 
+    .stButton>button { 
         background-color: #009BDB; 
         color: #FFFFFF; 
         border-radius: 6px; 
@@ -76,39 +94,44 @@ st.markdown(
         border: none;
         padding: 8px 16px;
         transition: all 0.3s ease;
-    }}
-    .stButton>button:hover {{ 
+    }
+    .stButton>button:hover { 
         background-color: #240085; 
         color: #FFFFFF; 
-    }}
+    }
     
-    .card-status {{
+    .card-status {
         padding: 15px;
         border-radius: 8px;
         font-weight: bold;
         text-align: center;
         margin-bottom: 15px;
-    }}
-    .status-approved {{ 
+    }
+    .status-approved { 
         background-color: #93BA1F; 
         color: #FFFFFF; 
         border: 1px solid #93BA1F; 
-    }}
-    .status-partial {{ 
+    }
+    .status-partial { 
         background-color: #D1DD00; 
         color: #240085; 
         border: 1px solid #D1DD00; 
-    }}
-    .status-rejected {{ 
+    }
+    .status-rejected { 
         background-color: #F8D7DA; 
         color: #721C24; 
         border: 1px solid #F5C6CB; 
-    }}
+    }
 
-    .stProgress > div > div > div > div {{
+    .stProgress > div > div > div > div {
         background-color: #93BA1F;
-    }}
+    }
     </style>
+
+    <!-- Elemento do Logo Fixo e Inclinado no Canto Inferior Direito -->
+    <div class="watermark-bottom-right">
+        <img src="https://yatto.com.br/wp-content/uploads/2025/01/yatto-id-v1.png" alt="Yattó Logo">
+    </div>
 """,
     unsafe_allow_html=True,
 )

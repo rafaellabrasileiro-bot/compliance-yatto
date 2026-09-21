@@ -11,7 +11,7 @@ import streamlit as st
 # 1. CONFIGURAÇÃO DA PÁGINA & ESTILO VISUAL YATTÓ
 # ==============================================================================
 st.set_page_config(
-    page_title="Central de Homologação | Yattó",
+    page_title="Central de Análises Documentais | Yattó",
     page_icon="♻️",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -230,16 +230,16 @@ REQUISITOS = {
         "obrigatorios": [
             "Alvará de Funcionamento",
             "Licença Sanitária",
-            "AVCB ou CLCB",
-            "Licença Ambiental",
-            "Comprovante de Inscrição e de Situação Cadastral – CNPJ",
-            "Inscrição Estadual",
-            "Certificado de Regularidade IBAMA – CTF/APP",
+            "AVCB/CLCB",
+            "Dispensa ou Licença Ambiental",
+            "Cartão CNPJ",
+            "Inscrição Estadual Ativa",
+            "Certificado de Regularidade - CTF IBAMA",
             "CND Federal",
             "CND Estadual",
             "CND Municipal",
-            "Certidão Negativa de Débitos Trabalhistas – CNDT",
-            "Certificado de Regularidade do Fundo de Garantia por Tempo de Serviço – FGTS",
+            "Certidão Negativa de Débitos Trabalhistas (CNDT)",
+            "Certificado de Regularidade do FGTS",
             "PGR – Plano de Gerenciamento de Riscos",
             "PCMSO – Programa de Controle Médico de Saúde Ocupacional",
             "Ficha de Entrega de EPI’s",
@@ -247,30 +247,30 @@ REQUISITOS = {
             "Relatório de Inspeção de Caldeiras",
             "Certificado de Treinamento de Segurança na Operação de Caldeiras – NR 13",
             "Certificado de Destinação Final da Borra Orgânica",
-            "Plano de Atendimento a Emergências – PAE"
+            "Seguro Ambiental de Carga / PAE"
         ],
         "opcionais": [
             "Nota Fiscal de Venda do Óleo",
             "Certificado de Destinação do PET para Reciclagem",
             "Comprovante de Medidas Preventivas e Corretivas de Controle de Pragas",
-            "Certificado de Treinamento – NR01, NR06 e/ou NR12"
+            "Certificado de Treinamento (NR01, NR06 e/ou NR12)"
         ],
         "criticidade": {
             "🔴 Grave": [
                 "Alvará de Funcionamento",
                 "Licença Sanitária",
-                "AVCB ou CLCB",
-                "Licença Ambiental",
-                "Comprovante de Inscrição e de Situação Cadastral – CNPJ",
-                "Inscrição Estadual",
-                "Certificado de Regularidade IBAMA – CTF/APP"
+                "AVCB/CLCB",
+                "Dispensa ou Licença Ambiental",
+                "Cartão CNPJ",
+                "Inscrição Estadual Ativa",
+                "Certificado de Regularidade - CTF IBAMA"
             ],
             "🟡 Médio": [
                 "CND Federal",
                 "CND Estadual",
                 "CND Municipal",
-                "Certidão Negativa de Débitos Trabalhistas – CNDT",
-                "Certificado de Regularidade do Fundo de Garantia por Tempo de Serviço – FGTS",
+                "Certidão Negativa de Débitos Trabalhistas (CNDT)",
+                "Certificado de Regularidade do FGTS",
                 "PGR – Plano de Gerenciamento de Riscos",
                 "PCMSO – Programa de Controle Médico de Saúde Ocupacional",
                 "Ficha de Entrega de EPI’s",
@@ -278,24 +278,38 @@ REQUISITOS = {
                 "Relatório de Inspeção de Caldeiras",
                 "Certificado de Treinamento de Segurança na Operação de Caldeiras – NR 13",
                 "Certificado de Destinação Final da Borra Orgânica",
-                "Plano de Atendimento a Emergências – PAE"
+                "Seguro Ambiental de Carga / PAE"
             ],
             "🟢 Leve": [
                 "Nota Fiscal de Venda do Óleo",
                 "Certificado de Destinação do PET para Reciclagem",
                 "Comprovante de Medidas Preventivas e Corretivas de Controle de Pragas",
-                "Certificado de Treinamento – NR01, NR06 e/ou NR12"
+                "Certificado de Treinamento (NR01, NR06 e/ou NR12)"
             ]
         }
     }
 }
 
-TODOS_DOCUMENTOS_POSSIVEIS = sorted(list(set(
-    doc
-    for cat_data in REQUISITOS.values()
-    for lista_docs in [cat_data.get("obrigatorios", []), cat_data.get("opcionais", [])]
-    for doc in lista_docs
-)))
+PADRONIZACAO_NOME_DOC = {
+    "Comprovante de Inscrição e de Situação Cadastral – CNPJ": "Cartão CNPJ",
+    "Inscrição Estadual": "Inscrição Estadual Ativa",
+    "Licença Ambiental": "Dispensa ou Licença Ambiental",
+    "AVCB ou CLCB": "AVCB/CLCB",
+    "Certificado de Regularidade IBAMA – CTF/APP": "Certificado de Regularidade - CTF IBAMA",
+    "Certidão Negativa de Débitos Trabalhistas – CNDT": "Certidão Negativa de Débitos Trabalhistas (CNDT)",
+    "Certificado de Regularidade do Fundo de Garantia por Tempo de Serviço – FGTS": "Certificado de Regularidade do FGTS",
+    "Plano de Atendimento a Emergências – PAE": "Seguro Ambiental de Carga / PAE",
+    "Certificado de Treinamento – NR01, NR06 e/ou NR12": "Certificado de Treinamento (NR01, NR06 e/ou NR12)"
+}
+
+TODOS_DOCUMENTOS_SET = set()
+for cat_data in REQUISITOS.values():
+    for lista_docs in [cat_data.get("obrigatorios", []), cat_data.get("opcionais", [])]:
+        for doc in lista_docs:
+            doc_padronizado = PADRONIZACAO_NOME_DOC.get(doc, doc)
+            TODOS_DOCUMENTOS_SET.add(doc_padronizado)
+
+TODOS_DOCUMENTOS_POSSIVEIS = sorted(list(TODOS_DOCUMENTOS_SET))
 
 OPCOES_ATIVIDADES_POR_CATEGORIA = {
     "Cooperativas": [
@@ -713,7 +727,7 @@ if menu == "Central de Análises":
                         )
 
 elif menu == "Matriz de Requisitos Yattó":
-    st.title("Matriz Geral de Requisitos")
+    st.title("Matriz Geral de Requisitos de Compliance")
     st.write("Consulte as exigências documentais divididas por categoria:")
 
     for cat, reqs in REQUISITOS.items():

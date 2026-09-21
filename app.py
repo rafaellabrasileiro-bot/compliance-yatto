@@ -10,16 +10,15 @@ import streamlit as st
 # ==============================================================================
 st.set_page_config(
     page_title="Central de Compliance | Yattó",
-    page_icon="📄",
+    page_icon="♻️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# Imagem de Fundo Yattó convertida em Base64
+# Imagem de Fundo Yattó convertida em Base64 para garantir carregamento
 BACKGROUND_B64 = """iVBORw0KGgoAAAANSUhEUgAAA8YAAAHRCAYAAACo3aDLAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAP+lSURBVHhe7N0HWBRH3wfwX/pSpSsgNkBQUBAVGxZs
 WRNLIjY0/mKMUYstUWPUaGJLL/42Y4s1GqPGXhDFXhBsqChFUR4sCNL7s7s3x1044O6O0f+/3/P8/e21+m3szszN3fA8"""
 
-# Injeção de CSS com fundo dinâmico
 st.markdown(
     f"""
     <style>
@@ -34,7 +33,7 @@ st.markdown(
         background-size: cover;
     }}
     
-    /* Transparência suave dos elementos para garantir leitura e destaque do fundo */
+    /* Transparência dos blocos para visualização do fundo */
     div[data-testid="stSidebar"] {{
         background-color: rgba(244, 246, 248, 0.88);
         border-right: 2px solid #009BDB;
@@ -52,7 +51,7 @@ st.markdown(
     .main-header {{ font-size: 26px; font-weight: bold; color: #009BDB; margin-bottom: 5px; }}
     .sub-header {{ font-size: 14px; color: #87868A; margin-bottom: 25px; }}
     
-    /* Estilização dos Botões com Cores da Marca */
+    /* Botões */
     .stButton>button {{ 
         background-color: #009BDB; 
         color: #FFFFFF; 
@@ -91,7 +90,7 @@ st.markdown(
         border: 1px solid #F5C6CB; 
     }}
 
-    /* Personalização da Barra de Progresso */
+    /* Barra de Progresso */
     .stProgress > div > div > div > div {{
         background-color: #93BA1F;
     }}
@@ -209,6 +208,14 @@ REQUISITOS = {
     },
 }
 
+# Lista completa unificada de documentos
+TODOS_DOCUMENTOS_POSSIVEIS = sorted(list(set(
+    doc
+    for cat_data in REQUISITOS.values()
+    for lista_docs in cat_data.values()
+    for doc in lista_docs
+)))
+
 # ==============================================================================
 # 3. LEITURA DE PDFS & EXTRAÇÃO DE DADOS
 # ==============================================================================
@@ -246,18 +253,21 @@ def extrair_datas(texto):
 # 4. MOTOR DE ANÁLISE DE COMPLIANCE
 # ==============================================================================
 
-def analisar_documentos(categoria, arquivos_uploaded, selecionados_manuais):
+def analisar_documentos(categoria, arquivos_uploaded, modo_analise, doc_especifico_selecionado):
     reqs = REQUISITOS.get(categoria, {})
 
-    todos_obrigatorios = (
-        reqs.get("obrigatorios_base", [])
-        + reqs.get("fiscais_cnd", [])
-        + reqs.get("sst_seguranca", [])
-    )
-    especificos = reqs.get("especificos_operacao", [])
-    total_exigido = list(set(todos_obrigatorios + especificos))
+    if modo_analise == "Análise Pontual (Documento Avulso)":
+        total_exigido = [doc_especifico_selecionado]
+    else:
+        todos_obrigatorios = (
+            reqs.get("obrigatorios_base", [])
+            + reqs.get("fiscais_cnd", [])
+            + reqs.get("sst_seguranca", [])
+        )
+        especificos = reqs.get("especificos_operacao", [])
+        total_exigido = list(set(todos_obrigatorios + especificos))
 
-    docs_encontrados = list(selecionados_manuais)
+    docs_encontrados = []
     cnpjs_encontrados = []
     datas_vencimento = []
     relatorio_erros = []
@@ -284,19 +294,10 @@ def analisar_documentos(categoria, arquivos_uploaded, selecionados_manuais):
 
     hoje = datetime.now()
     datas_vencidas = [d for d in datas_vencimento if d < hoje]
-    datas_proximas = [
-        d for d in datas_vencimento if 0 <= (d - hoje).days <= 30
-    ]
 
     if datas_vencidas:
         str_venc = [d.strftime("%d/%m/%Y") for d in datas_vencidas]
         relatorio_erros.append(f"❌ Documento(s) com data VENCIDA: {', '.join(str_venc)}")
-
-    if datas_proximas:
-        str_prox = [d.strftime("%d/%m/%Y") for d in datas_proximas]
-        relatorio_erros.append(
-            f"⚠️ Documento(s) a vencer nos próximos 30 dias: {', '.join(str_prox)}"
-        )
 
     entregues = [d for d in total_exigido if d in docs_encontrados]
     pendentes = [d for d in total_exigido if d not in docs_encontrados]
@@ -305,14 +306,22 @@ def analisar_documentos(categoria, arquivos_uploaded, selecionados_manuais):
         (len(entregues) / len(total_exigido) * 100) if total_exigido else 0
     )
 
-    if datas_vencidas:
-        status_final = "REPROVADO (DOC VENCIDO)"
-    elif pct_conclusao == 100 and not relatorio_erros:
-        status_final = "HOMOLOGADO / APROVADO"
-    elif pct_conclusao > 0:
-        status_final = "EM HOMOLOGAÇÃO PARCIAL"
+    if modo_analise == "Análise Pontual (Documento Avulso)":
+        if datas_vencidas:
+            status_final = "DOCUMENTO REPROVADO (VENCIDO)"
+        elif len(entregues) > 0 and not relatorio_erros:
+            status_final = "DOCUMENTO EM CONFORMIDADE (APROVADO)"
+        else:
+            status_final = "DOCUMENTO NÃO IDENTIFICADO OU INCOMPLETO"
     else:
-        status_final = "AGUARDANDO DOCUMENTAÇÃO"
+        if datas_vencidas:
+            status_final = "REPROVADO (DOC VENCIDO)"
+        elif pct_conclusao == 100 and not relatorio_erros:
+            status_final = "HOMOLOGADO / APROVADO"
+        elif pct_conclusao > 0:
+            status_final = "EM HOMOLOGAÇÃO PARCIAL"
+        else:
+            status_final = "AGUARDANDO DOCUMENTAÇÃO"
 
     return {
         "status": status_final,
@@ -343,61 +352,67 @@ if menu == "Central de Análises":
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<div class="sub-header">Validação automatizada e acompanhamento de homologações parciais | Yattó</div>',
+        '<div class="sub-header">Validação automatizada de parceiros e documentos avulsos | Yattó</div>',
         unsafe_allow_html=True,
     )
 
     col_left, col_right = st.columns([1.1, 1.9])
 
     with col_left:
-        st.subheader("1. Dados do Parceiro")
+        st.subheader("1. Tipo de Verificação")
+        modo_analise = st.radio(
+            "Selecione o escopo da verificação:",
+            [
+                "Análise Completa / Homologação (Vários documentos)",
+                "Análise Pontual (Documento Avulso)",
+            ],
+        )
+
+        doc_especifico_selecionado = None
+        if modo_analise == "Análise Pontual (Documento Avulso)":
+            doc_especifico_selecionado = st.selectbox(
+                "Escolha o documento a ser verificado:",
+                TODOS_DOCUMENTOS_POSSIVEIS
+            )
+
+        st.subheader("2. Dados do Parceiro")
         razao_social = st.text_input(
             "Razão Social / Nome", placeholder="Ex: Operador Logístico Óleo Sp"
         )
         categoria = st.selectbox("Categoria do Fornecedor", list(REQUISITOS.keys()))
 
-        st.subheader("2. Anexo dos PDFs")
+        st.subheader("3. Anexo dos PDFs")
         arquivos = st.file_uploader(
-            "Upload dos arquivos em PDF:", type=["pdf"], accept_multiple_files=True
+            "Upload do(s) arquivo(s) em PDF:", type=["pdf"], accept_multiple_files=True
         )
-
-        st.subheader("3. Checklist Manual (Opcional)")
-        st.caption("Marque os documentos que você já conferiu manualmente:")
-
-        reqs_cat = REQUISITOS[categoria]
-        todos_docs = list(
-            set(
-                reqs_cat.get("obrigatorios_base", [])
-                + reqs_cat.get("fiscais_cnd", [])
-                + reqs_cat.get("sst_seguranca", [])
-                + reqs_cat.get("especificos_operacao", [])
-            )
-        )
-
-        docs_manuais = []
-        for doc in todos_docs:
-            if st.checkbox(doc, key=f"chk_{doc}"):
-                docs_manuais.append(doc)
 
         btn_analisar = st.button("🔍 Executar Análise de Compliance")
 
     with col_right:
-        st.subheader("Parecer do Análise de Compliance")
+        st.subheader("Parecer da Análise de Compliance")
 
         if btn_analisar:
             if not razao_social:
                 st.warning(
                     "Por favor, insira a Razão Social do fornecedor para prosseguir."
                 )
+            elif not arquivos:
+                st.warning(
+                    "Por favor, faça o upload de pelo menos um arquivo PDF para analisar."
+                )
             else:
                 with st.spinner("Analisando PDFs e cruzando requisitos..."):
-                    res = analisar_documentos(categoria, arquivos, docs_manuais)
+                    res = analisar_documentos(
+                        categoria, arquivos, modo_analise, doc_especifico_selecionado
+                    )
 
                 st.write(f"**Fornecedor:** {razao_social}")
                 st.write(f"**Categoria:** {categoria}")
+                if modo_analise == "Análise Pontual (Documento Avulso)":
+                    st.write(f"**Documento Alvo:** {doc_especifico_selecionado}")
 
                 status = res["status"]
-                if "APROVADO" in status:
+                if "APROVADO" in status or "CONFORMIDADE" in status:
                     st.markdown(
                         f'<div class="card-status status-approved">🟢 STATUS: {status}</div>',
                         unsafe_allow_html=True,
@@ -414,7 +429,8 @@ if menu == "Central de Análises":
                         unsafe_allow_html=True,
                     )
 
-                st.progress(res["progresso"] / 100)
+                if modo_analise != "Análise Pontual (Documento Avulso)":
+                    st.progress(res["progresso"] / 100)
 
                 if res["erros"]:
                     st.markdown("### ⚠️ Inconformidades Detectadas")
@@ -427,12 +443,12 @@ if menu == "Central de Análises":
                 c_ent, c_pend = st.columns(2)
 
                 with c_ent:
-                    st.markdown("#### ✅ Documentos Entregues")
+                    st.markdown("#### ✅ Documentos Validados")
                     if res["entregues"]:
                         for d in res["entregues"]:
                             st.write(f"✓ {d}")
                     else:
-                        st.write("*Nenhum documento identificado ainda.*")
+                        st.write("*Nenhum documento validado ainda.*")
 
                 with c_pend:
                     st.markdown("#### ⏳ Documentos Pendentes")
@@ -440,19 +456,26 @@ if menu == "Central de Análises":
                         for d in res["pendentes"]:
                             st.write(f"○ {d}")
                     else:
-                        st.write("🎉 *Nenhuma pendência documental!*")
+                        st.write("🎉 *Nenhuma pendência para esta análise!*")
 
                 st.markdown("---")
                 st.markdown("### ✉️ Resposta Pronta para Envio")
-                texto_email = (
-                    f"Prezados,\n\nRecebemos a documentação de compliance de {razao_social}.\n\n"
-                    f"STATUS DA HOMOLOGAÇÃO: {res['status']} ({res['progresso']}% concluído)\n\n"
-                    f"DOCUMENTOS RECEBIDOS ({len(res['entregues'])}):\n"
-                    + "\n".join([f"- {d}" for d in res["entregues"]])
-                    + f"\n\nPENDÊNCIAS PARA CONCLUIR A HOMOLOGAÇÃO ({len(res['pendentes'])}):\n"
-                    + "\n".join([f"- {d}" for d in res["pendentes"]])
-                    + "\n\nFicamos no aguardo dos itens pendentes para finalização do cadastro.\n\nAtenciosamente,\nEquipe de Compliance Yattó"
-                )
+                if modo_analise == "Análise Pontual (Documento Avulso)":
+                    texto_email = (
+                        f"Prezados,\n\nRealizamos a verificação pontual do documento ({doc_especifico_selecionado}) referente a {razao_social}.\n\n"
+                        f"STATUS DA VERIFICAÇÃO: {res['status']}\n\n"
+                        f"Atenciosamente,\nEquipe de Compliance Yattó"
+                    )
+                else:
+                    texto_email = (
+                        f"Prezados,\n\nRecebemos a documentação de compliance de {razao_social}.\n\n"
+                        f"STATUS DA HOMOLOGAÇÃO: {res['status']} ({res['progresso']}% concluído)\n\n"
+                        f"DOCUMENTOS RECEBIDOS ({len(res['entregues'])}):\n"
+                        + "\n".join([f"- {d}" for d in res["entregues"]])
+                        + f"\n\nPENDÊNCIAS PARA CONCLUIR A HOMOLOGAÇÃO ({len(res['pendentes'])}):\n"
+                        + "\n".join([f"- {d}" for d in res["pendentes"]])
+                        + "\n\nFicamos no aguardo dos itens pendentes para finalização do cadastro.\n\nAtenciosamente,\nEquipe de Compliance Yattó"
+                    )
                 st.text_area(
                     "Copie o texto abaixo para enviar ao parceiro:",
                     texto_email,

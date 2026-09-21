@@ -188,7 +188,7 @@ REQUISITOS = {
             "Inscrição Estadual Ativa",
             "Alvará de Funcionamento",
             "Dispensa ou Licença Ambiental",
-            "RNTRC ANTT",
+            "Registro Nacional de Transportadores Rodoviários de Cargas (RNTRC)",
             "Carteira Nacional de Habilitação (CNH)",
             "Licenciamento do Veículo (CRLV)"
         ],
@@ -199,7 +199,7 @@ REQUISITOS = {
         "obrigatorios": [
             "Carteira Nacional de Habilitação (CNH)",
             "Licenciamento do Veículo (CRLV)",
-            "RNTRC ANTT",
+            "Registro Nacional de Transportadores Rodoviários de Cargas (RNTRC)",
             "Termo LGPD"
         ],
         "opcionais": [],
@@ -213,7 +213,7 @@ REQUISITOS = {
             "Certificado de Regularidade - CTF IBAMA",
             "AATIPP",
             "Licença ou Certificado Ambiental Estadual",
-            "RNTRC ANTT",
+            "Registro Nacional de Transportadores Rodoviários de Cargas (RNTRC)",
             "Seguro Ambiental de Carga / PAE",
             "Amostragem de Treinamento MOPP",
             "Licenciamento do Veículo (CRLV)"
@@ -294,7 +294,7 @@ PADRONIZACAO_NOME_DOC = {
     "Comprovante de Inscrição e de Situação Cadastral – CNPJ": "Cartão CNPJ",
     "Inscrição Estadual": "Inscrição Estadual Ativa",
     "Licença Ambiental": "Dispensa ou Licença Ambiental",
-    "AVCB ou CLCB": "AVCB/CLCB",
+    "AVCB/CLCB": "AVCB/CLCB",
     "Certificado de Regularidade IBAMA – CTF/APP": "Certificado de Regularidade - CTF IBAMA",
     "Certidão Negativa de Débitos Trabalhistas – CNDT": "Certidão Negativa de Débitos Trabalhistas (CNDT)",
     "Certificado de Regularidade do Fundo de Garantia por Tempo de Serviço – FGTS": "Certificado de Regularidade do FGTS",
@@ -559,7 +559,7 @@ if menu == "Central de Análises":
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<div class="sub-header">Validação automatizada de parceiros e documentos avulsos | Yattó</div>',
+        '<div class="sub-header">Validação Automatizada de Parceiros | Yattó</div>',
         unsafe_allow_html=True,
     )
 
@@ -584,7 +584,7 @@ if menu == "Central de Análises":
 
         st.subheader("2. Dados do Parceiro")
         razao_social = st.text_input(
-            "Razão Social / Nome", placeholder="Ex: Operador Logístico Óleo Sp"
+            "Razão Social/CNPJ", placeholder="Ex: Operador Logístico de Óleo"
         )
         categoria = st.selectbox("Categoria do Fornecedor", list(REQUISITOS.keys()))
 

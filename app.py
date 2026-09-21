@@ -94,112 +94,108 @@ st.markdown(
 )
 
 # ==============================================================================
-# 2. MATRIZ INTEGRADA DE REQUISITOS (COM NOMES E EMOJIS ATUALIZADOS)
+# 2. MATRIZ INTEGRADA DE REQUISITOS (EXCLUSIVIDADE CARGILL)
 # ==============================================================================
 REQUISITOS = {
     "🛢️ Operador Logístico de Óleo (Cargill)": {
-        "obrigatorios_base": [
+        "obrigatorios": [
             "Cartão CNPJ",
             "Inscrição Estadual Ativa",
             "Alvará de Funcionamento",
             "Dispensa ou Licença Ambiental",
-            "Certificado de Regularidade IBAMA - CTF/APP",
-            "Plano de Atendimento a Emergências (PAE)",
-            "Licença Sanitária",
-        ],
-        "fiscais_cnd": [
             "Certidão Negativa de Débitos Trabalhistas",
             "CND Federal",
             "CND Estadual",
             "CND Municipal",
+            "AVCB/CLCB",
+            "Certificado de Regularidade - CTF IBAMA",
             "Certificado de Regularidade do FGTS",
-        ],
-        "sst_seguranca": [
-            "AVCB ou CLCB",
             "PGR - Plano de Gerenciamento de Riscos",
             "PCMSO - Programa de Controle Médico de Saúde Ocupacional",
             "Ficha de Entrega de EPI’s / ASOs",
-            "Certificado de Treinamento (NR01, NR06 e/ou NR12)",
-        ],
-        "especificos_operacao": [
             "Relatório de Inspeção de Caldeiras",
             "Certificado de Treinamento de Segurança na Operação de Caldeiras (NR 13)",
             "Certificado de Destinação Final da Borra Orgânica",
-            "Certificado de Destinação do PET para Reciclagem",
+            "Plano de Atendimento a Emergências (PAE)",
+            "Licença Sanitária",
             "Nota Fiscal de Venda do Óleo",
-            "Comprovante de Medidas Preventivas e Corretivas de Controle de Pragas",
+            "Certificado de Destinação do PET para Reciclagem",
+            "Comprovante de Medidas Preventivas e Corretivas de Controle de Pragas"
         ],
+        "opcionais": [
+            "Certificado de Treinamento (NR01, NR06 e/ou NR12)"
+        ]
     },
     "🤝 Cooperativas": {
-        "obrigatorios_base": [
+        "obrigatorios": [
             "Cartão CNPJ",
             "Inscrição Estadual Ativa",
             "Alvará de Funcionamento",
             "Dispensa ou Licença Ambiental",
             "Estatuto",
             "Última Ata de Eleição",
-        ],
-        "fiscais_cnd": [
-            "CND Trabalhista",
+            "Certidão Negativa de Débitos Trabalhistas",
             "CND Federal",
             "CND Estadual",
             "CND Municipal",
+            "AVCB/CLCB",
+            "Certificado de Regularidade - CTF IBAMA"
         ],
-        "sst_seguranca": ["AVCB ou CLCB"],
-        "especificos_operacao": ["Certificado de Regularidade IBAMA - CTF/APP"],
+        "opcionais": []
     },
     "📦 Destinador": {
-        "obrigatorios_base": [
+        "obrigatorios": [
             "Cartão CNPJ",
             "Inscrição Estadual Ativa",
             "Alvará de Funcionamento",
             "Dispensa ou Licença Ambiental",
-        ],
-        "fiscais_cnd": ["CND Federal", "CND Estadual", "CND Municipal"],
-        "sst_seguranca": ["AVCB ou CLCB"],
-        "especificos_operacao": [
-            "Certificado de Regularidade IBAMA - CTF/APP",
+            "AVCB/CLCB",
+            "Certificado de Regularidade - CTF IBAMA",
             "ISO 14001",
-            "ISO 9001",
+            "ISO 9001"
         ],
+        "opcionais": []
     },
     "🚛 Transportador - Pessoa Jurídica": {
-        "obrigatorios_base": [
+        "obrigatorios": [
             "Cartão CNPJ",
             "Inscrição Estadual Ativa",
             "Alvará de Funcionamento",
             "Dispensa ou Licença Ambiental",
             "RNTRC ANTT",
+            "Carteira Nacional de Habilitação (CNH)",
+            "Licenciamento do Veículo (CRLV)"
         ],
-        "fiscais_cnd": ["CND Federal"],
-        "sst_seguranca": ["CNH", "CRLV"],
-        "especificos_operacao": ["Termo LGPD"],
+        "opcionais": []
     },
     "🚛 Transportador - Pessoa Física": {
-        "obrigatorios_base": ["CNH", "CRLV", "RNTRC ANTT", "Termo LGPD"],
-        "fiscais_cnd": [],
-        "sst_seguranca": [],
-        "especificos_operacao": ["Comprovante de Residência"],
+        "obrigatorios": [
+            "Carteira Nacional de Habilitação (CNH)",
+            "Licenciamento do Veículo (CRLV)",
+            "RNTRC ANTT",
+            "Termo LGPD"
+        ],
+        "opcionais": []
     },
     "☢️ Transportador (Resíduos Perigosos)": {
-        "obrigatorios_base": [
+        "obrigatorios": [
             "Cartão CNPJ",
             "Inscrição Estadual Ativa",
             "Alvará de Funcionamento",
-            "Certificado de Regularidade IBAMA - CTF/APP",
-            "AATIPP",
-            "Licença Ambiental Estadual",
+            "Certificado de Regularidade - CTF IBAMA",
+            "AATIPP - Transporte Interestadual de Produtos Perigosos",
+            "Licença ou Certificado Ambiental Estadual",
             "RNTRC ANTT",
-            "Seguro Ambiental / PAE",
-        ],
-        "fiscais_cnd": ["CND Federal"],
-        "sst_seguranca": ["CNH com MOPP", "CRLV"],
-        "especificos_operacao": [
+            "Seguro Ambiental de Carga / PAE",
+            "Amostragem de Treinamento MOPP",
+            "Licenciamento do Veículo (CRLV)",
             "ISO 14001",
+            "ISO 9001",
             "Ficha de Emergência",
-            "Relatório Passivo Ambiental",
+            "Relatório de Passivo Ambiental ou Infração Ambiental"
         ],
-    },
+        "opcionais": []
+    }
 }
 
 TODOS_DOCUMENTOS_POSSIVEIS = sorted(list(set(
@@ -273,15 +269,13 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
     reqs = REQUISITOS.get(categoria, {})
 
     if modo_analise == "Análise Pontual (Documento Avulso)":
-        total_exigido = [doc_especifico_selecionado]
+        obrigatorios_exigidos = [doc_especifico_selecionado]
+        opcionais_exigidos = []
     else:
-        todos_obrigatorios = (
-            reqs.get("obrigatorios_base", [])
-            + reqs.get("fiscais_cnd", [])
-            + reqs.get("sst_seguranca", [])
-        )
-        especificos = reqs.get("especificos_operacao", [])
-        total_exigido = list(set(todos_obrigatorios + especificos))
+        obrigatorios_exigidos = reqs.get("obrigatorios", [])
+        opcionais_exigidos = reqs.get("opcionais", [])
+
+    total_exigido = list(set(obrigatorios_exigidos + opcionais_exigidos))
 
     docs_encontrados = []
     cnpjs_encontrados = []
@@ -309,17 +303,18 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
         str_venc = [d.strftime("%d/%m/%Y") for d in datas_vencidas]
         relatorio_erros.append(f"❌ Documento(s) com data de validade VENCIDA: {', '.join(str_venc)}")
 
-    entregues = [d for d in total_exigido if d in docs_encontrados]
-    pendentes = [d for d in total_exigido if d not in docs_encontrados]
+    obrig_entregues = [d for d in obrigatorios_exigidos if d in docs_encontrados]
+    obrig_pendentes = [d for d in obrigatorios_exigidos if d not in docs_encontrados]
+    opc_entregues = [d for d in opcionais_exigidos if d in docs_encontrados]
 
     pct_conclusao = (
-        (len(entregues) / len(total_exigido) * 100) if total_exigido else 0
+        (len(obrig_entregues) / len(obrigatorios_exigidos) * 100) if obrigatorios_exigidos else 0
     )
 
     if modo_analise == "Análise Pontual (Documento Avulso)":
         if datas_vencidas:
             status_final = "DOCUMENTO REPROVADO (VENCIDO)"
-        elif len(entregues) > 0:
+        elif len(obrig_entregues) > 0:
             status_final = "DOCUMENTO EM CONFORMIDADE (APROVADO)"
         else:
             status_final = "DOCUMENTO NÃO IDENTIFICADO OU INCOMPLETO"
@@ -337,8 +332,9 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
         "status": status_final,
         "progresso": round(pct_conclusao, 1),
         "cnpjs": cnpjs_unicos,
-        "entregues": entregues,
-        "pendentes": pendentes,
+        "obrig_entregues": obrig_entregues,
+        "obrig_pendentes": obrig_pendentes,
+        "opc_entregues": opc_entregues,
         "erros": relatorio_erros,
     }
 
@@ -460,19 +456,24 @@ if menu == "Central de Análises":
 
                         with c_ent:
                             st.markdown("#### ✅ Documentos Validados")
-                            if res["entregues"]:
-                                for d in res["entregues"]:
+                            if res["obrig_entregues"]:
+                                for d in res["obrig_entregues"]:
                                     st.write(f"✓ {d}")
                             else:
-                                st.write("*Nenhum documento validado ainda.*")
+                                st.write("*Nenhum documento validado.*")
+
+                            if res["opc_entregues"]:
+                                st.markdown("#### 🌟 Opcionais Entregues")
+                                for d in res["opc_entregues"]:
+                                    st.write(f"★ {d}")
 
                         with c_pend:
                             st.markdown("#### ⏳ Documentos Pendentes")
-                            if res["pendentes"]:
-                                for d in res["pendentes"]:
+                            if res["obrig_pendentes"]:
+                                for d in res["obrig_pendentes"]:
                                     st.write(f"○ {d}")
                             else:
-                                st.write("🎉 *Nenhuma pendência para esta análise!*")
+                                st.write("🎉 *Nenhuma pendência documental!*")
 
                         st.markdown("---")
                         st.markdown("### ✉️ Resposta Pronta para Envio")
@@ -486,10 +487,11 @@ if menu == "Central de Análises":
                             texto_email = (
                                 f"Prezados,\n\nRecebemos a documentação de compliance de {razao_social}.\n\n"
                                 f"STATUS DA HOMOLOGAÇÃO: {res['status']} ({res['progresso']}% concluído)\n\n"
-                                f"DOCUMENTOS RECEBIDOS ({len(res['entregues'])}):\n"
-                                + "\n".join([f"- {d}" for d in res["entregues"]])
-                                + f"\n\nPENDÊNCIAS PARA CONCLUIR A HOMOLOGAÇÃO ({len(res['pendentes'])}):\n"
-                                + "\n".join([f"- {d}" for d in res["pendentes"]])
+                                f"DOCUMENTOS RECEBIDOS ({len(res['obrig_entregues'])}):\n"
+                                + "\n".join([f"- {d}" for d in res["obrig_entregues"]])
+                                + (f"\n\nDOCUMENTOS OPCIONAIS RECEBIDOS:\n" + "\n".join([f"- {d}" for d in res["opc_entregues"]]) if res["opc_entregues"] else "")
+                                + f"\n\nPENDÊNCIAS PARA CONCLUIR A HOMOLOGAÇÃO ({len(res['obrig_pendentes'])}):\n"
+                                + "\n".join([f"- {d}" for d in res["obrig_pendentes"]])
                                 + "\n\nFicamos no aguardo dos itens pendentes para finalização do cadastro.\n\nAtenciosamente,\nEquipe de Compliance Yattó"
                             )
                         st.text_area(
@@ -505,20 +507,14 @@ elif menu == "Matriz de Requisitos Yattó":
     for cat, reqs in REQUISITOS.items():
         with st.expander(f"{cat}"):
             st.write(
-                "**Geral & Licenciamento:**",
-                ", ".join(reqs.get("obrigatorios_base", [])),
+                "**Documentos Exigidos:**",
+                ", ".join(reqs.get("obrigatorios", [])) if reqs.get("obrigatorios") else "Nenhum"
             )
-            st.write(
-                "**Certidões & Fiscais:**", ", ".join(reqs.get("fiscais_cnd", []))
-            )
-            st.write(
-                "**SST / Segurança do Trabalho:**",
-                ", ".join(reqs.get("sst_seguranca", [])),
-            )
-            st.write(
-                "**Específicos / Operação:**",
-                ", ".join(reqs.get("especificos_operacao", [])),
-            )
+            if reqs.get("opcionais"):
+                st.write(
+                    "**Documentos Opcionais:**",
+                    ", ".join(reqs.get("opcionais", []))
+                )
 
 elif menu == "Sobre o Decreto 12.688/2025":
     st.title("Segurança Jurídica & Decreto nº 12.688/2025")

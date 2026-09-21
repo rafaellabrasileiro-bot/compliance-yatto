@@ -5,7 +5,7 @@ import pandas as pd
 import streamlit as st
 
 # ==============================================================================
-# 1. CONFIGURAÇÃO DA PÁGINA & ESTILO VISUAL YATTÓ
+# 1. CONFIGURAÇÃO DA PÁGINA & ESTILO VISUAL COM A PALETA DA YATTÓ
 # ==============================================================================
 st.set_page_config(
     page_title="Central de Compliance | Yattó",
@@ -17,20 +17,40 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    /* Cores Yattó: Ciano #009bdb, Azul Navy #240085, Cinza #87868a */
-    .main-header { font-size: 26px; font-weight: bold; color: #009bdb; margin-bottom: 5px; }
-    .sub-header { font-size: 14px; color: #87868a; margin-bottom: 25px; }
+    /* Aplicação da Paleta Yattó:
+       #009BDB - Ciano
+       #93BA1F - Verde
+       #240085 - Azul Navy
+       #D1DD00 - Amarelo Realce
+       #87868A - Cinza Neutro
+    */
     
+    /* Cabeçalhos */
+    .main-header { font-size: 26px; font-weight: bold; color: #009BDB; margin-bottom: 5px; }
+    .sub-header { font-size: 14px; color: #87868A; margin-bottom: 25px; }
+    
+    /* Estilização dos Botões */
     .stButton>button { 
-        background-color: #009bdb; 
-        color: white; 
+        background-color: #009BDB; 
+        color: #FFFFFF; 
         border-radius: 6px; 
         font-weight: bold; 
         border: none;
         padding: 8px 16px;
+        transition: all 0.3s ease;
     }
-    .stButton>button:hover { background-color: #240085; color: white; }
+    .stButton>button:hover { 
+        background-color: #240085; 
+        color: #FFFFFF; 
+    }
     
+    /* Barra Lateral (Sidebar) */
+    section[data-testid="stSidebar"] {
+        background-color: #F4F6F8;
+        border-right: 2px solid #009BDB;
+    }
+    
+    /* Cartões de Status */
     .card-status {
         padding: 15px;
         border-radius: 8px;
@@ -38,9 +58,26 @@ st.markdown(
         text-align: center;
         margin-bottom: 15px;
     }
-    .status-approved { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-    .status-partial { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-    .status-rejected { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    .status-approved { 
+        background-color: #93BA1F; 
+        color: #FFFFFF; 
+        border: 1px solid #93BA1F; 
+    }
+    .status-partial { 
+        background-color: #D1DD00; 
+        color: #240085; 
+        border: 1px solid #D1DD00; 
+    }
+    .status-rejected { 
+        background-color: #F8D7DA; 
+        color: #721C24; 
+        border: 1px solid #F5C6CB; 
+    }
+
+    /* Personalização da Barra de Progresso */
+    .stProgress > div > div > div > div {
+        background-color: #93BA1F;
+    }
     </style>
 """,
     unsafe_allow_html=True,

@@ -64,14 +64,14 @@ st.markdown(
         border: 1px solid rgba(0, 155, 219, 0.2);
     }
     
-    /* Ícone Oficial da Yattó no Canto Inferior Direito (Inclinado/Tortinho) */
+    /* Ícone Oficial da Yattó no Canto Inferior Direito (MAIOR, Destacado e Inclinado/Tortinho) */
     .watermark-bottom-right {
         position: fixed;
         bottom: 20px;
-        right: 25px;
-        width: 110px;
+        right: 30px;
+        width: 260px; /* Aumentado consideravelmente para destacar */
         z-index: 9999;
-        opacity: 0.85;
+        opacity: 0.88;
         transform: rotate(-8deg);
         pointer-events: none;
         transition: all 0.3s ease;

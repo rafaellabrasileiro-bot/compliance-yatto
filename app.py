@@ -94,10 +94,10 @@ st.markdown(
 )
 
 # ==============================================================================
-# 2. MATRIZ INTEGRADA DE REQUISITOS (INCLUINDO CARGILL / ÓLEO)
+# 2. MATRIZ INTEGRADA DE REQUISITOS (COM NOMES E EMOJIS ATUALIZADOS)
 # ==============================================================================
 REQUISITOS = {
-    "Operador Logístico de Óleo (Cargill)": {
+    "🛢️ Operador Logístico de Óleo (Cargill)": {
         "obrigatorios_base": [
             "Cartão CNPJ",
             "Inscrição Estadual Ativa",
@@ -130,7 +130,7 @@ REQUISITOS = {
             "Comprovante de Medidas Preventivas e Corretivas de Controle de Pragas",
         ],
     },
-    "Cooperativa": {
+    "🤝 Cooperativas": {
         "obrigatorios_base": [
             "Cartão CNPJ",
             "Inscrição Estadual Ativa",
@@ -148,7 +148,7 @@ REQUISITOS = {
         "sst_seguranca": ["AVCB ou CLCB"],
         "especificos_operacao": ["Certificado de Regularidade IBAMA - CTF/APP"],
     },
-    "Destinador": {
+    "📦 Destinador": {
         "obrigatorios_base": [
             "Cartão CNPJ",
             "Inscrição Estadual Ativa",
@@ -163,7 +163,7 @@ REQUISITOS = {
             "ISO 9001",
         ],
     },
-    "Transportador PJ": {
+    "🚛 Transportador - Pessoa Jurídica": {
         "obrigatorios_base": [
             "Cartão CNPJ",
             "Inscrição Estadual Ativa",
@@ -175,13 +175,13 @@ REQUISITOS = {
         "sst_seguranca": ["CNH", "CRLV"],
         "especificos_operacao": ["Termo LGPD"],
     },
-    "Transportador PF": {
+    "🚛 Transportador - Pessoa Física": {
         "obrigatorios_base": ["CNH", "CRLV", "RNTRC ANTT", "Termo LGPD"],
         "fiscais_cnd": [],
         "sst_seguranca": [],
         "especificos_operacao": ["Comprovante de Residência"],
     },
-    "Transportador (Resíduos Perigosos)": {
+    "☢️ Transportador (Resíduos Perigosos)": {
         "obrigatorios_base": [
             "Cartão CNPJ",
             "Inscrição Estadual Ativa",
@@ -247,13 +247,8 @@ def extrair_cnpjs(texto):
     return list(set(re.findall(padrao, texto)))
 
 def extrair_datas_validade(texto):
-    """
-    Busca apenas datas associadas a contextos explícitos de validade/vencimento
-    para não confundir com datas de emissão.
-    """
     linhas = texto.split("\n")
     datas_vencimento = []
-    hoje = datetime.now()
     
     palavras_chave_validade = ["validade", "válido até", "valido ate", "vencimento", "expira em", "expira"]
 
@@ -508,7 +503,7 @@ elif menu == "Matriz de Requisitos Yattó":
     st.write("Consulte as exigências documentais divididas por categoria:")
 
     for cat, reqs in REQUISITOS.items():
-        with st.expander(f"📌 {cat}"):
+        with st.expander(f"{cat}"):
             st.write(
                 "**Geral & Licenciamento:**",
                 ", ".join(reqs.get("obrigatorios_base", [])),

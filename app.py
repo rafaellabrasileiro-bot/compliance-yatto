@@ -19,13 +19,10 @@ st.set_page_config(
 
 st.markdown(
     """
-    @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap');
-
     <style>
     /* Estilo de fundo do aplicativo inteiro (Branco Limpo) */
     .stApp {
         background-color: #FFFFFF !important;
-        font-family: 'Work Sans', sans-serif !important;
     }
 
     [data-testid="stAppViewContainer"] {
@@ -66,30 +63,9 @@ st.markdown(
         box-shadow: 0 4px 20px rgba(0, 155, 219, 0.08);
         border: 1px solid rgba(0, 155, 219, 0.2);
     }
-    
-    /* Título Estilizado no Padrão do Site Yattó */
-    .yatto-heading-title {
-        font-family: 'Work Sans', sans-serif;
-        font-size: 34px;
-        font-weight: 300;
-        color: #111827;
-        line-height: 1.25;
-        margin-bottom: 6px;
-        letter-spacing: -0.5px;
-    }
 
-    .yatto-heading-title b {
-        font-weight: 700;
-        color: #000000;
-    }
-
-    .sub-header { 
-        font-family: 'Work Sans', sans-serif;
-        font-size: 15px; 
-        color: #6B7280; 
-        margin-bottom: 25px; 
-        font-weight: 400;
-    }
+    .main-header { font-size: 26px; font-weight: bold; color: #009BDB; margin-bottom: 5px; }
+    .sub-header { font-size: 14px; color: #87868A; margin-bottom: 25px; }
     
     /* Botões Yattó */
     .stButton>button { 
@@ -565,10 +541,7 @@ menu = st.sidebar.radio(
 
 if menu == "Central de Análises":
     st.markdown(
-        '<div class="elementor-element elementor-element-96f8a4b elementor-widget elementor-widget-heading">'
-        '<div class="elementor-widget-container">'
-        '<h1 class="yatto-heading-title">Central de <b>Análises Documentais</b></h1>'
-        '</div></div>',
+        '<div class="main-header">Central de Análises Documentais</div>',
         unsafe_allow_html=True,
     )
     st.markdown(
@@ -740,7 +713,7 @@ if menu == "Central de Análises":
                         )
 
 elif menu == "Matriz de Requisitos Yattó":
-    st.title("Matriz Geral de Requisitos de Compliance")
+    st.title("Matriz Geral de Requisitos")
     st.write("Consulte as exigências documentais divididas por categoria:")
 
     for cat, reqs in REQUISITOS.items():

@@ -43,11 +43,16 @@ st.markdown(
     /* Container do Logotipo na Sidebar */
     .logo-container {{
         text-align: center;
-        padding: 15px 10px;
+        padding: 10px;
         background-color: #FFFFFF;
         border-radius: 8px;
         margin-bottom: 20px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }}
+
+    .logo-container img {{
+        max-width: 100%;
+        height: auto;
     }}
 
     /* Cartões principais */
@@ -109,38 +114,12 @@ st.markdown(
 )
 
 # ==============================================================================
-# 2. LOGOTIPO DA YATTÓ NA BARRA LATERAL (ACIMA DA NAVEGAÇÃO)
+# 2. LOGOTIPO OFICIAL DA YATTÓ NA BARRA LATERAL (ACIMA DA NAVEGAÇÃO)
 # ==============================================================================
 st.sidebar.markdown(
     """
     <div class="logo-container">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 140" width="100%">
-            <defs>
-                <linearGradient id="yattoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#009BDB" />
-                    <stop offset="100%" stop-color="#93BA1F" />
-                </linearGradient>
-            </defs>
-            <g fill="none" stroke-width="8" stroke-linecap="round">
-                <!-- y -->
-                <path d="M 40,35 L 70,85 C 60,115 45,125 30,125" stroke="#009BDB" />
-                <path d="M 70,35 L 55,60" stroke="#009BDB" />
-                <!-- a -->
-                <path d="M 125,50 C 105,50 95,65 95,75 C 95,88 108,98 122,98 C 135,98 142,88 142,75 L 142,98" stroke="#009BDB" />
-                <!-- t1 -->
-                <path d="M 160,25 L 160,98" stroke="#009BDB" />
-                <path d="M 148,42 L 175,42" stroke="#009BDB" />
-                <!-- t2 -->
-                <path d="M 195,25 L 195,98" stroke="#009BDB" />
-                <path d="M 183,42 L 210,42" stroke="#009BDB" />
-                <!-- o + Folha -->
-                <path d="M 270,70 C 270,88 255,99 238,99 C 220,99 208,85 208,70 C 208,52 222,42 238,42 C 255,42 270,55 270,70 Z" stroke="url(#yattoGrad)" />
-                <path d="M 262,45 C 275,25 292,20 292,20 C 292,20 290,40 272,52 Z" fill="#93BA1F" stroke="#93BA1F" stroke-width="2" />
-            </g>
-            <!-- Tagline -->
-            <text x="310" y="52" font-family="'Work Sans', sans-serif" font-size="28" fill="#009BDB" font-weight="300">economia</text>
-            <text x="310" y="82" font-family="'Work Sans', sans-serif" font-size="28" fill="#009BDB" font-weight="300">circular</text>
-        </svg>
+        <img src="https://yatto.com.br/wp-content/uploads/2025/01/yatto-id-v1.png" alt="Yattó - Economia Circular">
     </div>
 """,
     unsafe_allow_html=True,

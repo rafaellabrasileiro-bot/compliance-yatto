@@ -8,7 +8,7 @@ import pandas as pd
 import streamlit as st
 
 # ==============================================================================
-# 1. CONFIGURAÇÃO DA PÁGINA & ESTILO VISUAL LIMPO YATTÓ
+# 1. CONFIGURAÇÃO DA PÁGINA & ESTILO VISUAL YATTÓ
 # ==============================================================================
 st.set_page_config(
     page_title="Central de Compliance | Yattó",
@@ -64,15 +64,15 @@ st.markdown(
         border: 1px solid rgba(0, 155, 219, 0.2);
     }
     
-    /* Logotipo da Yattó no Canto Inferior Direito (Fixado e Ligeiramente Inclinado/Tortinho) */
+    /* Ícone Oficial da Yattó no Canto Inferior Direito (Inclinado/Tortinho) */
     .watermark-bottom-right {
         position: fixed;
-        bottom: 25px;
+        bottom: 20px;
         right: 25px;
-        width: 180px;
+        width: 110px;
         z-index: 9999;
         opacity: 0.85;
-        transform: rotate(-6deg);
+        transform: rotate(-8deg);
         pointer-events: none;
         transition: all 0.3s ease;
     }
@@ -128,9 +128,9 @@ st.markdown(
     }
     </style>
 
-    <!-- Elemento do Logo Fixo e Inclinado no Canto Inferior Direito -->
+    <!-- Ícone Oficial SVG Yattó no Canto Inferior Direito -->
     <div class="watermark-bottom-right">
-        <img src="https://yatto.com.br/wp-content/uploads/2025/01/yatto-id-v1.png" alt="Yattó Logo">
+        <img src="https://yatto.com.br/wp-content/uploads/2025/01/icone-novas-cores.svg" alt="Yattó Ícone">
     </div>
 """,
     unsafe_allow_html=True,

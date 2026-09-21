@@ -23,21 +23,21 @@ BACKGROUND_B64 = """iVBORw0KGgoAAAANSUhEUgAAA8YAAAHRCAYAAACo3aDLAAAAAXNSR0IArs4c
 st.markdown(
     f"""
     <style>
-    /* Estilo de fundo inspirado no site institucional yatto.com.br */
+    /* Estilo de fundo da aplicação principal */
     .stApp {{
-        background: url("data:image/png;base64,{BACKGROUND_B64}") no-repeat center center fixed;
-        background-size: cover;
+        background: url("data:image/png;base64,{BACKGROUND_B64}") no-repeat center center fixed !important;
+        background-size: cover !important;
     }}
 
-    [data-testid="stAppViewContainer"] {{
-        background: url("data:image/png;base64,{BACKGROUND_B64}") no-repeat center center fixed;
-        background-size: cover;
-    }}
-    
-    /* Barra lateral estilizada */
-    div[data-testid="stSidebar"] {{
-        background-color: rgba(244, 246, 248, 0.92);
+    /* Barra lateral de Navegação (Sidebar) com FUNDO EXCLUSIVAMENTE BRANCO */
+    section[data-testid="stSidebar"] {{
+        background-color: #FFFFFF !important;
+        background-image: none !important;
         border-right: 2px solid #009BDB;
+    }}
+
+    section[data-testid="stSidebar"] > div:first-child {{
+        background-color: #FFFFFF !important;
     }}
 
     /* Container do Logotipo na Sidebar */
@@ -47,7 +47,6 @@ st.markdown(
         background-color: #FFFFFF;
         border-radius: 8px;
         margin-bottom: 20px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }}
 
     .logo-container img {{
@@ -55,13 +54,14 @@ st.markdown(
         height: auto;
     }}
 
-    /* Cartões principais */
+    /* Cartões de verificação com fundo GRADIENTE suave da Yattó (Elementor) */
     .stMainBlockContainer {{
-        background-color: rgba(255, 255, 255, 0.92);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 248, 255, 0.93) 50%, rgba(245, 250, 240, 0.95) 100%) !important;
         border-radius: 12px;
         padding: 25px;
         margin-top: 15px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 155, 219, 0.15);
     }}
     
     .main-header {{ font-size: 26px; font-weight: bold; color: #009BDB; margin-bottom: 5px; }}

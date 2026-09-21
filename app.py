@@ -1,3 +1,4 @@
+import base64
 import re
 from datetime import datetime
 import fitz  # PyMuPDF
@@ -5,7 +6,7 @@ import pandas as pd
 import streamlit as st
 
 # ==============================================================================
-# 1. CONFIGURAÇÃO DA PÁGINA & ESTILO VISUAL YATTÓ COM IMAGEM DE FUNDO
+# 1. CONFIGURAÇÃO DA PÁGINA & ESTILO VISUAL YATTÓ COM IMAGEM DE FUNDO EMBUTIDA
 # ==============================================================================
 st.set_page_config(
     page_title="Central de Compliance | Yattó",
@@ -14,41 +15,45 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# Imagem de Fundo Yattó convertida em Base64
+BACKGROUND_B64 = """iVBORw0KGgoAAAANSUhEUgAAA8YAAAHRCAYAAACo3aDLAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAP+lSURBVHhe7N0HWBRH3wfwX/pSpSsgNkBQUBAVGxZs
+WRNLIjY0/mKMUYstUWPUaGJLL/42Y4s1GqPGXhDFXhBsqChFUR4sCNL7s7s3x1044O6O0f+/3/P8/e21+m3szszN3fA8"""
+
+# Injeção de CSS com fundo dinâmico
 st.markdown(
-    """
+    f"""
     <style>
-    /* Aplicação da Imagem de Fundo (fundo.png do GitHub) */
-    .stApp {
-        background: url("app/static/fundo.png") no-repeat center center fixed;
+    /* Aplicação da Imagem de Fundo Oficial Yattó */
+    .stApp {{
+        background: url("data:image/png;base64,{BACKGROUND_B64}") no-repeat center center fixed;
         background-size: cover;
-    }
+    }}
 
-    /* Regra de apoio para busca direta no repositório */
-    [data-testid="stAppViewContainer"] {
-        background: url("fundo.png") no-repeat center center fixed;
+    [data-testid="stAppViewContainer"] {{
+        background: url("data:image/png;base64,{BACKGROUND_B64}") no-repeat center center fixed;
         background-size: cover;
-    }
+    }}
     
-    /* Transparência e leiturabilidade dos blocos sobre o fundo */
-    div[data-testid="stSidebar"] {
-        background-color: rgba(244, 246, 248, 0.92);
+    /* Transparência suave dos elementos para garantir leitura e destaque do fundo */
+    div[data-testid="stSidebar"] {{
+        background-color: rgba(244, 246, 248, 0.88);
         border-right: 2px solid #009BDB;
-    }
+    }}
 
-    .stMainBlockContainer {
+    .stMainBlockContainer {{
         background-color: rgba(255, 255, 255, 0.90);
         border-radius: 12px;
         padding: 25px;
         margin-top: 15px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    }
+    }}
     
     /* Cabeçalhos */
-    .main-header { font-size: 26px; font-weight: bold; color: #009BDB; margin-bottom: 5px; }
-    .sub-header { font-size: 14px; color: #87868A; margin-bottom: 25px; }
+    .main-header {{ font-size: 26px; font-weight: bold; color: #009BDB; margin-bottom: 5px; }}
+    .sub-header {{ font-size: 14px; color: #87868A; margin-bottom: 25px; }}
     
-    /* Estilização dos Botões */
-    .stButton>button { 
+    /* Estilização dos Botões com Cores da Marca */
+    .stButton>button {{ 
         background-color: #009BDB; 
         color: #FFFFFF; 
         border-radius: 6px; 
@@ -56,40 +61,40 @@ st.markdown(
         border: none;
         padding: 8px 16px;
         transition: all 0.3s ease;
-    }
-    .stButton>button:hover { 
+    }}
+    .stButton>button:hover {{ 
         background-color: #240085; 
         color: #FFFFFF; 
-    }
+    }}
     
     /* Cartões de Status */
-    .card-status {
+    .card-status {{
         padding: 15px;
         border-radius: 8px;
         font-weight: bold;
         text-align: center;
         margin-bottom: 15px;
-    }
-    .status-approved { 
+    }}
+    .status-approved {{ 
         background-color: #93BA1F; 
         color: #FFFFFF; 
         border: 1px solid #93BA1F; 
-    }
-    .status-partial { 
+    }}
+    .status-partial {{ 
         background-color: #D1DD00; 
         color: #240085; 
         border: 1px solid #D1DD00; 
-    }
-    .status-rejected { 
+    }}
+    .status-rejected {{ 
         background-color: #F8D7DA; 
         color: #721C24; 
         border: 1px solid #F5C6CB; 
-    }
+    }}
 
     /* Personalização da Barra de Progresso */
-    .stProgress > div > div > div > div {
+    .stProgress > div > div > div > div {{
         background-color: #93BA1F;
-    }
+    }}
     </style>
 """,
     unsafe_allow_html=True,

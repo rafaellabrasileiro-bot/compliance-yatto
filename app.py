@@ -210,7 +210,7 @@ TODOS_DOCUMENTOS_POSSIVEIS = sorted(list(set(
 )))
 
 # ==============================================================================
-# 3. LEITURA DE PDFS, ZIPS & EXTRAÇÃO DE DADOS
+# 3. LEITURA DE PDFS, ZIPS & EXTRAÇÃO INTELIGENTE DE DADOS
 # ==============================================================================
 
 def extrair_texto_pdf(file_bytes):
@@ -224,7 +224,6 @@ def extrair_texto_pdf(file_bytes):
         return ""
 
 def processar_arquivos_upload(arquivos_uploaded):
-    """Extrai os arquivos do upload, descompactando arquivos .ZIP se houver."""
     lista_pdfs = []
     if arquivos_uploaded:
         for file in arquivos_uploaded:
@@ -247,20 +246,29 @@ def extrair_cnpjs(texto):
     padrao = r"\b\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}\b"
     return list(set(re.findall(padrao, texto)))
 
-def extrair_datas(texto):
-    padrao = r"\b\d{2}/\d{2}/\d{4}\b"
-    datas_str = re.findall(padrao, texto)
-    datas_validas = []
+def extrair_datas_validade(texto):
+    """
+    Busca apenas datas associadas a contextos explícitos de validade/vencimento
+    para não confundir com datas de emissão.
+    """
+    linhas = texto.split("\n")
+    datas_vencimento = []
     hoje = datetime.now()
+    
+    palavras_chave_validade = ["validade", "válido até", "valido ate", "vencimento", "expira em", "expira"]
 
-    for d in datas_str:
-        try:
-            dt = datetime.strptime(d, "%d/%m/%Y")
-            if dt.year >= hoje.year - 1 and dt.year <= hoje.year + 10:
-                datas_validas.append(dt)
-        except ValueError:
-            continue
-    return datas_validas
+    for linha in linhas:
+        linha_lower = linha.lower()
+        if any(p in linha_lower for p in palavras_chave_validade):
+            padrao = r"\b\d{2}/\d{2}/\d{4}\b"
+            datas_encontradas = re.findall(padrao, linha)
+            for d in datas_encontradas:
+                try:
+                    dt = datetime.strptime(d, "%d/%m/%Y")
+                    datas_vencimento.append(dt)
+                except ValueError:
+                    continue
+    return datas_vencimento
 
 # ==============================================================================
 # 4. MOTOR DE ANÁLISE DE COMPLIANCE
@@ -289,7 +297,7 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
         texto = extrair_texto_pdf(pdf_bytes)
 
         cnpjs_encontrados.extend(extrair_cnpjs(texto))
-        datas_vencimento.extend(extrair_datas(texto))
+        datas_vencimento.extend(extrair_datas_validade(texto))
 
         texto_busca = (nome_pdf + " " + texto).lower()
         for doc in total_exigido:
@@ -298,17 +306,13 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
                 docs_encontrados.append(doc)
 
     cnpjs_unicos = list(set(cnpjs_encontrados))
-    if len(cnpjs_unicos) > 1:
-        relatorio_erros.append(
-            f"⚠️ Divergência de CNPJs nos PDFs: {', '.join(cnpjs_unicos)}"
-        )
 
     hoje = datetime.now()
     datas_vencidas = [d for d in datas_vencimento if d < hoje]
 
     if datas_vencidas:
         str_venc = [d.strftime("%d/%m/%Y") for d in datas_vencidas]
-        relatorio_erros.append(f"❌ Documento(s) com data VENCIDA: {', '.join(str_venc)}")
+        relatorio_erros.append(f"❌ Documento(s) com data de validade VENCIDA: {', '.join(str_venc)}")
 
     entregues = [d for d in total_exigido if d in docs_encontrados]
     pendentes = [d for d in total_exigido if d not in docs_encontrados]
@@ -320,7 +324,7 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
     if modo_analise == "Análise Pontual (Documento Avulso)":
         if datas_vencidas:
             status_final = "DOCUMENTO REPROVADO (VENCIDO)"
-        elif len(entregues) > 0 and not relatorio_erros:
+        elif len(entregues) > 0:
             status_final = "DOCUMENTO EM CONFORMIDADE (APROVADO)"
         else:
             status_final = "DOCUMENTO NÃO IDENTIFICADO OU INCOMPLETO"
@@ -455,7 +459,7 @@ if menu == "Central de Análises":
                                 st.error(err)
 
                         if res["cnpjs"]:
-                            st.info(f"**CNPJ(s) Identificados nos PDFs:** {', '.join(res['cnpjs'])}")
+                            st.info(f"**CNPJ(s) Mapeados nos PDFs:** {', '.join(res['cnpjs'])}")
 
                         c_ent, c_pend = st.columns(2)
 

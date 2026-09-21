@@ -34,9 +34,9 @@ st.markdown(
         background-size: cover;
     }}
     
-    /* Barra lateral estilizada */
+    /* Barra lateral (Navegação) com fundo BRANCO PURO */
     div[data-testid="stSidebar"] {{
-        background-color: rgba(244, 246, 248, 0.92);
+        background-color: #FFFFFF !important;
         border-right: 2px solid #009BDB;
     }}
 
@@ -55,13 +55,14 @@ st.markdown(
         height: auto;
     }}
 
-    /* Cartões principais */
+    /* Cartões de conteúdo/verificação com fundo GRADIENTE suave da Yattó (Elementor) */
     .stMainBlockContainer {{
-        background-color: rgba(255, 255, 255, 0.92);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 248, 255, 0.93) 50%, rgba(245, 250, 240, 0.95) 100%);
         border-radius: 12px;
         padding: 25px;
         margin-top: 15px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 155, 219, 0.15);
     }}
     
     .main-header {{ font-size: 26px; font-weight: bold; color: #009BDB; margin-bottom: 5px; }}

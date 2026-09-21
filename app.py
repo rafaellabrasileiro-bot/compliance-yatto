@@ -94,7 +94,7 @@ st.markdown(
 )
 
 # ==============================================================================
-# 2. MATRIZ INTEGRADA DE REQUISITOS (SISTEMA DE GRAVIDADE E OPCIONAIS)
+# 2. MATRIZ INTEGRADA DE REQUISITOS (SISTEMA DE CRITICIDADE CARGILL REVOLUTION)
 # ==============================================================================
 REQUISITOS = {
     "🤝 Cooperativas": {
@@ -160,7 +160,7 @@ REQUISITOS = {
             "Inscrição Estadual Ativa",
             "Alvará de Funcionamento",
             "Certificado de Regularidade - CTF IBAMA",
-            "AATIPP - Autorização de Transporte Interestadual",
+            "AATIPP",
             "Licença ou Certificado Ambiental Estadual",
             "RNTRC ANTT",
             "Seguro Ambiental de Carga / PAE",
@@ -177,60 +177,63 @@ REQUISITOS = {
     },
     "🛢️ Operador Logístico de Óleo (Cargill)": {
         "obrigatorios": [
-            "Cartão CNPJ",
-            "Inscrição Estadual Ativa",
             "Alvará de Funcionamento",
-            "Dispensa ou Licença Ambiental",
-            "Certidão Negativa de Débitos Trabalhistas (CNDT)",
+            "Licença Sanitária",
+            "AVCB ou CLCB",
+            "Licença Ambiental",
+            "Comprovante de Inscrição e de Situação Cadastral – CNPJ",
+            "Inscrição Estadual",
+            "Certificado de Regularidade IBAMA – CTF/APP",
             "CND Federal",
             "CND Estadual",
             "CND Municipal",
-            "AVCB/CLCB",
-            "Certificado de Regularidade - CTF IBAMA",
-            "Certificado de Regularidade do FGTS",
-            "PGR - Plano de Gerenciamento de Riscos",
-            "PCMSO - Programa de Controle Médico de Saúde Ocupacional",
-            "Ficha de Entrega de EPI’s / ASOs",
+            "Certidão Negativa de Débitos Trabalhistas – CNDT",
+            "Certificado de Regularidade do Fundo de Garantia por Tempo de Serviço – FGTS",
+            "PGR – Plano de Gerenciamento de Riscos",
+            "PCMSO – Programa de Controle Médico de Saúde Ocupacional",
+            "Ficha de Entrega de EPI’s",
+            "Atestados de Saúde Ocupacional – ASO",
             "Relatório de Inspeção de Caldeiras",
-            "Certificado de Treinamento de Segurança na Operação de Caldeiras (NR 13)",
+            "Certificado de Treinamento de Segurança na Operação de Caldeiras – NR 13",
             "Certificado de Destinação Final da Borra Orgânica",
-            "Plano de Atendimento a Emergências (PAE)",
-            "Licença Sanitária",
-            "Nota Fiscal de Venda do Óleo",
-            "Certificado de Destinação do PET para Reciclagem",
-            "Comprovante de Medidas Preventivas e Corretivas de Controle de Pragas"
+            "Plano de Atendimento a Emergências – PAE"
         ],
         "opcionais": [
-            "Certificado de Treinamento (NR01, NR06 e/ou NR12)"
+            "Nota Fiscal de Venda do Óleo",
+            "Certificado de Destinação do PET para Reciclagem",
+            "Comprovante de Medidas Preventivas e Corretivas de Controle de Pragas",
+            "Certificado de Treinamento – NR01, NR06 e/ou NR12"
         ],
         "criticidade": {
-            "🔴 Grave (Incapacitante)": [
-                "Cartão CNPJ",
-                "Dispensa ou Licença Ambiental",
-                "Certificado de Regularidade - CTF IBAMA",
-                "PGR - Plano de Gerenciamento de Riscos",
-                "Plano de Atendimento a Emergências (PAE)",
-                "Relatório de Inspeção de Caldeiras",
-                "Certificado de Treinamento de Segurança na Operação de Caldeiras (NR 13)"
-            ],
-            "🟡 Média (Regularizável com Prazo)": [
+            "🔴 Grave": [
                 "Alvará de Funcionamento",
-                "Inscrição Estadual Ativa",
-                "AVCB/CLCB",
                 "Licença Sanitária",
-                "PCMSO - Programa de Controle Médico de Saúde Ocupacional",
-                "Certificado de Destinação Final da Borra Orgânica",
-                "Certificado de Destinação do PET para Reciclagem"
+                "AVCB ou CLCB",
+                "Licença Ambiental",
+                "Comprovante de Inscrição e de Situação Cadastral – CNPJ",
+                "Inscrição Estadual",
+                "Certificado de Regularidade IBAMA – CTF/APP"
             ],
-            "🟢 Leve (Cadastro / Administrativo)": [
-                "Certidão Negativa de Débitos Trabalhistas (CNDT)",
+            "🟡 Médio": [
                 "CND Federal",
                 "CND Estadual",
                 "CND Municipal",
-                "Certificado de Regularidade do FGTS",
-                "Ficha de Entrega de EPI’s / ASOs",
+                "Certidão Negativa de Débitos Trabalhistas – CNDT",
+                "Certificado de Regularidade do Fundo de Garantia por Tempo de Serviço – FGTS",
+                "PGR – Plano de Gerenciamento de Riscos",
+                "PCMSO – Programa de Controle Médico de Saúde Ocupacional",
+                "Ficha de Entrega de EPI’s",
+                "Atestados de Saúde Ocupacional – ASO",
+                "Relatório de Inspeção de Caldeiras",
+                "Certificado de Treinamento de Segurança na Operação de Caldeiras – NR 13",
+                "Certificado de Destinação Final da Borra Orgânica",
+                "Plano de Atendimento a Emergências – PAE"
+            ],
+            "🟢 Leve": [
                 "Nota Fiscal de Venda do Óleo",
-                "Comprovante de Medidas Preventivas e Corretivas de Controle de Pragas"
+                "Certificado de Destinação do PET para Reciclagem",
+                "Comprovante de Medidas Preventivas e Corretivas de Controle de Pragas",
+                "Certificado de Treinamento – NR01, NR06 e/ou NR12"
             ]
         }
     }
@@ -349,16 +352,15 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
         (len(obrig_entregues) / len(obrigatorios_exigidos) * 100) if obrigatorios_exigidos else 0
     )
 
-    # Classificação de Gravidade de Pendências (Se houver matriz de criticidade)
     matriz_crit = reqs.get("criticidade", {})
-    pendencias_criticas = {"Grave": [], "Média": [], "Leve": []}
+    pendencias_criticas = {"Grave": [], "Médio": [], "Leve": []}
     if matriz_crit and obrig_pendentes:
         for p in obrig_pendentes:
-            if p in matriz_crit.get("🔴 Grave (Incapacitante)", []):
+            if p in matriz_crit.get("🔴 Grave", []):
                 pendencias_criticas["Grave"].append(p)
-            elif p in matriz_crit.get("🟡 Média (Regularizável com Prazo)", []):
-                pendencias_criticas["Média"].append(p)
-            else:
+            elif p in matriz_crit.get("🟡 Médio", []):
+                pendencias_criticas["Médio"].append(p)
+            elif p in matriz_crit.get("🟢 Leve", []):
                 pendencias_criticas["Leve"].append(p)
 
     if modo_analise == "Análise Pontual (Documento Avulso)":
@@ -526,15 +528,14 @@ if menu == "Central de Análises":
                             else:
                                 st.write("🎉 *Nenhuma pendência documental!*")
 
-                        # Exibição de Criticidade de Pendências (Se aplicável à categoria)
                         crit = res.get("pendencias_criticas", {})
                         if any(crit.values()):
                             st.markdown("---")
                             st.markdown("### 🚦 Avaliação de Criticidade das Pendências")
                             if crit.get("Grave"):
                                 st.error(f"**Pendências Graves (Impedimentos):** {', '.join(crit['Grave'])}")
-                            if crit.get("Média"):
-                                st.warning(f"**Pendências Médias (Prazo de Adequação):** {', '.join(crit['Média'])}")
+                            if crit.get("Médio"):
+                                st.warning(f"**Pendências Médias (Prazo de Adequação):** {', '.join(crit['Médio'])}")
                             if crit.get("Leve"):
                                 st.info(f"**Pendências Leves (Cadastro/Administrativo):** {', '.join(crit['Leve'])}")
 
@@ -553,7 +554,7 @@ if menu == "Central de Análises":
                                 f"DOCUMENTOS OBRIGATÓRIOS RECEBIDOS ({len(res['obrig_entregues'])}):\n"
                                 + "\n".join([f"- {d}" for d in res["obrig_entregues"]])
                                 + (f"\n\nDOCUMENTOS OPCIONAIS RECEBIDOS:\n" + "\n".join([f"- {d}" for d in res["opc_entregues"]]) if res["opc_entregues"] else "")
-                                + f"\n\nPENDÊNCIAS OBRIGATÓRIAS PARA HOMOLOGAÇÃO ({len(res['obrig_pendentes'])}):\n"
+                                + f"\n\nPENDÊNCIAS PARA CONCLUIR A HOMOLOGAÇÃO ({len(res['obrig_pendentes'])}):\n"
                                 + "\n".join([f"- {d}" for d in res["obrig_pendentes"]])
                                 + "\n\nFicamos no aguardo dos itens pendentes para finalização do cadastro.\n\nAtenciosamente,\nEquipe de Compliance Yattó"
                             )

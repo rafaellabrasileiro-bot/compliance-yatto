@@ -1,4 +1,3 @@
-import base64
 import re
 from datetime import datetime
 import fitz  # PyMuPDF
@@ -6,7 +5,7 @@ import pandas as pd
 import streamlit as st
 
 # ==============================================================================
-# 1. CONFIGURAÇÃO DA PÁGINA & IMAGEM DE FUNDO YATTÓ
+# 1. CONFIGURAÇÃO DA PÁGINA & ESTILO VISUAL YATTÓ COM IMAGEM DE FUNDO
 # ==============================================================================
 st.set_page_config(
     page_title="Central de Compliance | Yattó",
@@ -15,49 +14,41 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Imagem de fundo enviada embutida em Base64 para não quebrar no Streamlit
-BACKGROUND_B64 = """iVBORw0KGgoAAAANSUhEUgAABAAAAAIwCAYAAAD9P12XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAP+lSURBVHhe7N0HWBRH3wfwX/pSpSsgNkBQUBAVGxZs
-WRNLIjY0/mKMUYstUWPUaGJLL
-/42Y4s1GqPGXhDFXhBsqChFU
-R4sCNL7s7s3x1044O6O0f
-+/3/P8/e21
-+
-+7e
-+m
-3szsz
-N3fA8
-Standard base64 encoded background string place here
-"""
-
-# Aplicar a imagem de fundo e estilização CSS nos componentes
 st.markdown(
     """
     <style>
-    /* Imagem de fundo enviada para a aplicação inteira */
+    /* Aplicação da Imagem de Fundo Enviada para o GitHub */
     .stApp {
-        background: url("data:image/jpeg;base64,BACKGROUND_IMG_DATA") no-repeat center center fixed;
+        background: url("Fundo para reunião_solução yattó .png") no-repeat center center fixed;
         background-size: cover;
     }
-
-    /* Ajuste de transparência para que o fundo apareça com nitidez */
+    
+    /* Cores Yattó:
+       #009BDB - Ciano
+       #93BA1F - Verde
+       #240085 - Azul Navy
+       #D1DD00 - Amarelo Realce
+       #87868A - Cinza Neutro
+    */
+    
+    /* Transparência e leiturabilidade dos blocos sobre o fundo */
     div[data-testid="stSidebar"] {
-        background-color: rgba(255, 255, 255, 0.85);
+        background-color: rgba(244, 246, 248, 0.92);
         border-right: 2px solid #009BDB;
     }
 
-    /* Container dos conteúdos principais com leve opacidade para legibilidade */
     .stMainBlockContainer {
-        background-color: rgba(255, 255, 255, 0.88);
+        background-color: rgba(255, 255, 255, 0.90);
         border-radius: 12px;
         padding: 25px;
         margin-top: 15px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     }
-
+    
     /* Cabeçalhos */
     .main-header { font-size: 26px; font-weight: bold; color: #009BDB; margin-bottom: 5px; }
     .sub-header { font-size: 14px; color: #87868A; margin-bottom: 25px; }
-
+    
     /* Estilização dos Botões */
     .stButton>button { 
         background-color: #009BDB; 
@@ -72,7 +63,7 @@ st.markdown(
         background-color: #240085; 
         color: #FFFFFF; 
     }
-
+    
     /* Cartões de Status */
     .card-status {
         padding: 15px;
@@ -97,7 +88,7 @@ st.markdown(
         border: 1px solid #F5C6CB; 
     }
 
-    /* Barra de Progresso */
+    /* Personalização da Barra de Progresso */
     .stProgress > div > div > div > div {
         background-color: #93BA1F;
     }

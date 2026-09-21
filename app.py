@@ -94,16 +94,94 @@ st.markdown(
 )
 
 # ==============================================================================
-# 2. MATRIZ INTEGRADA DE REQUISITOS (EXCLUSIVIDADE CARGILL)
+# 2. MATRIZ INTEGRADA DE REQUISITOS (SISTEMA DE GRAVIDADE E OPCIONAIS)
 # ==============================================================================
 REQUISITOS = {
+    "🤝 Cooperativas": {
+        "obrigatorios": [
+            "Cartão CNPJ",
+            "Inscrição Estadual Ativa",
+            "Alvará de Funcionamento",
+            "Dispensa ou Licença Ambiental",
+            "Estatuto",
+            "Última Ata de Eleição",
+            "Certidão Negativa de Débitos Trabalhistas (CNDT)",
+            "CND Federal",
+            "CND Estadual",
+            "CND Municipal"
+        ],
+        "opcionais": [
+            "AVCB/CLCB",
+            "Certificado de Regularidade - CTF IBAMA"
+        ],
+        "criticidade": {}
+    },
+    "📦 Destinador": {
+        "obrigatorios": [
+            "Cartão CNPJ",
+            "Inscrição Estadual Ativa",
+            "Alvará de Funcionamento",
+            "Dispensa ou Licença Ambiental",
+            "AVCB/CLCB",
+            "Certificado de Regularidade - CTF IBAMA"
+        ],
+        "opcionais": [
+            "ISO 14001",
+            "ISO 9001"
+        ],
+        "criticidade": {}
+    },
+    "🚛 Transportador - Pessoa Jurídica": {
+        "obrigatorios": [
+            "Cartão CNPJ",
+            "Inscrição Estadual Ativa",
+            "Alvará de Funcionamento",
+            "Dispensa ou Licença Ambiental",
+            "RNTRC ANTT",
+            "Carteira Nacional de Habilitação (CNH)",
+            "Licenciamento do Veículo (CRLV)"
+        ],
+        "opcionais": [],
+        "criticidade": {}
+    },
+    "🚛 Transportador - Pessoa Física": {
+        "obrigatorios": [
+            "Carteira Nacional de Habilitação (CNH)",
+            "Licenciamento do Veículo (CRLV)",
+            "RNTRC ANTT",
+            "Termo LGPD"
+        ],
+        "opcionais": [],
+        "criticidade": {}
+    },
+    "☢️ Transportador (Resíduos Perigosos)": {
+        "obrigatorios": [
+            "Cartão CNPJ",
+            "Inscrição Estadual Ativa",
+            "Alvará de Funcionamento",
+            "Certificado de Regularidade - CTF IBAMA",
+            "AATIPP - Autorização de Transporte Interestadual",
+            "Licença ou Certificado Ambiental Estadual",
+            "RNTRC ANTT",
+            "Seguro Ambiental de Carga / PAE",
+            "Amostragem de Treinamento MOPP",
+            "Licenciamento do Veículo (CRLV)"
+        ],
+        "opcionais": [
+            "ISO 14001",
+            "ISO 9001",
+            "Ficha de Emergência",
+            "Relatório de Passivo Ambiental / Infração Ambiental"
+        ],
+        "criticidade": {}
+    },
     "🛢️ Operador Logístico de Óleo (Cargill)": {
         "obrigatorios": [
             "Cartão CNPJ",
             "Inscrição Estadual Ativa",
             "Alvará de Funcionamento",
             "Dispensa ou Licença Ambiental",
-            "Certidão Negativa de Débitos Trabalhistas",
+            "Certidão Negativa de Débitos Trabalhistas (CNDT)",
             "CND Federal",
             "CND Estadual",
             "CND Municipal",
@@ -124,84 +202,44 @@ REQUISITOS = {
         ],
         "opcionais": [
             "Certificado de Treinamento (NR01, NR06 e/ou NR12)"
-        ]
-    },
-    "🤝 Cooperativas": {
-        "obrigatorios": [
-            "Cartão CNPJ",
-            "Inscrição Estadual Ativa",
-            "Alvará de Funcionamento",
-            "Dispensa ou Licença Ambiental",
-            "Estatuto",
-            "Última Ata de Eleição",
-            "Certidão Negativa de Débitos Trabalhistas",
-            "CND Federal",
-            "CND Estadual",
-            "CND Municipal",
-            "AVCB/CLCB",
-            "Certificado de Regularidade - CTF IBAMA"
         ],
-        "opcionais": []
-    },
-    "📦 Destinador": {
-        "obrigatorios": [
-            "Cartão CNPJ",
-            "Inscrição Estadual Ativa",
-            "Alvará de Funcionamento",
-            "Dispensa ou Licença Ambiental",
-            "AVCB/CLCB",
-            "Certificado de Regularidade - CTF IBAMA",
-            "ISO 14001",
-            "ISO 9001"
-        ],
-        "opcionais": []
-    },
-    "🚛 Transportador - Pessoa Jurídica": {
-        "obrigatorios": [
-            "Cartão CNPJ",
-            "Inscrição Estadual Ativa",
-            "Alvará de Funcionamento",
-            "Dispensa ou Licença Ambiental",
-            "RNTRC ANTT",
-            "Carteira Nacional de Habilitação (CNH)",
-            "Licenciamento do Veículo (CRLV)"
-        ],
-        "opcionais": []
-    },
-    "🚛 Transportador - Pessoa Física": {
-        "obrigatorios": [
-            "Carteira Nacional de Habilitação (CNH)",
-            "Licenciamento do Veículo (CRLV)",
-            "RNTRC ANTT",
-            "Termo LGPD"
-        ],
-        "opcionais": []
-    },
-    "☢️ Transportador (Resíduos Perigosos)": {
-        "obrigatorios": [
-            "Cartão CNPJ",
-            "Inscrição Estadual Ativa",
-            "Alvará de Funcionamento",
-            "Certificado de Regularidade - CTF IBAMA",
-            "AATIPP - Transporte Interestadual de Produtos Perigosos",
-            "Licença ou Certificado Ambiental Estadual",
-            "RNTRC ANTT",
-            "Seguro Ambiental de Carga / PAE",
-            "Amostragem de Treinamento MOPP",
-            "Licenciamento do Veículo (CRLV)",
-            "ISO 14001",
-            "ISO 9001",
-            "Ficha de Emergência",
-            "Relatório de Passivo Ambiental ou Infração Ambiental"
-        ],
-        "opcionais": []
+        "criticidade": {
+            "🔴 Grave (Incapacitante)": [
+                "Cartão CNPJ",
+                "Dispensa ou Licença Ambiental",
+                "Certificado de Regularidade - CTF IBAMA",
+                "PGR - Plano de Gerenciamento de Riscos",
+                "Plano de Atendimento a Emergências (PAE)",
+                "Relatório de Inspeção de Caldeiras",
+                "Certificado de Treinamento de Segurança na Operação de Caldeiras (NR 13)"
+            ],
+            "🟡 Média (Regularizável com Prazo)": [
+                "Alvará de Funcionamento",
+                "Inscrição Estadual Ativa",
+                "AVCB/CLCB",
+                "Licença Sanitária",
+                "PCMSO - Programa de Controle Médico de Saúde Ocupacional",
+                "Certificado de Destinação Final da Borra Orgânica",
+                "Certificado de Destinação do PET para Reciclagem"
+            ],
+            "🟢 Leve (Cadastro / Administrativo)": [
+                "Certidão Negativa de Débitos Trabalhistas (CNDT)",
+                "CND Federal",
+                "CND Estadual",
+                "CND Municipal",
+                "Certificado de Regularidade do FGTS",
+                "Ficha de Entrega de EPI’s / ASOs",
+                "Nota Fiscal de Venda do Óleo",
+                "Comprovante de Medidas Preventivas e Corretivas de Controle de Pragas"
+            ]
+        }
     }
 }
 
 TODOS_DOCUMENTOS_POSSIVEIS = sorted(list(set(
     doc
     for cat_data in REQUISITOS.values()
-    for lista_docs in cat_data.values()
+    for lista_docs in [cat_data.get("obrigatorios", []), cat_data.get("opcionais", [])]
     for doc in lista_docs
 )))
 
@@ -311,6 +349,18 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
         (len(obrig_entregues) / len(obrigatorios_exigidos) * 100) if obrigatorios_exigidos else 0
     )
 
+    # Classificação de Gravidade de Pendências (Se houver matriz de criticidade)
+    matriz_crit = reqs.get("criticidade", {})
+    pendencias_criticas = {"Grave": [], "Média": [], "Leve": []}
+    if matriz_crit and obrig_pendentes:
+        for p in obrig_pendentes:
+            if p in matriz_crit.get("🔴 Grave (Incapacitante)", []):
+                pendencias_criticas["Grave"].append(p)
+            elif p in matriz_crit.get("🟡 Média (Regularizável com Prazo)", []):
+                pendencias_criticas["Média"].append(p)
+            else:
+                pendencias_criticas["Leve"].append(p)
+
     if modo_analise == "Análise Pontual (Documento Avulso)":
         if datas_vencidas:
             status_final = "DOCUMENTO REPROVADO (VENCIDO)"
@@ -319,8 +369,8 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
         else:
             status_final = "DOCUMENTO NÃO IDENTIFICADO OU INCOMPLETO"
     else:
-        if datas_vencidas:
-            status_final = "REPROVADO (DOC VENCIDO)"
+        if datas_vencidas or pendencias_criticas.get("Grave"):
+            status_final = "REPROVADO / RISCO GRAVE"
         elif pct_conclusao == 100 and not relatorio_erros:
             status_final = "HOMOLOGADO / APROVADO"
         elif pct_conclusao > 0:
@@ -335,6 +385,7 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
         "obrig_entregues": obrig_entregues,
         "obrig_pendentes": obrig_pendentes,
         "opc_entregues": opc_entregues,
+        "pendencias_criticas": pendencias_criticas,
         "erros": relatorio_erros,
     }
 
@@ -460,7 +511,7 @@ if menu == "Central de Análises":
                                 for d in res["obrig_entregues"]:
                                     st.write(f"✓ {d}")
                             else:
-                                st.write("*Nenhum documento validado.*")
+                                st.write("*Nenhum documento obrigatório validado.*")
 
                             if res["opc_entregues"]:
                                 st.markdown("#### 🌟 Opcionais Entregues")
@@ -475,6 +526,18 @@ if menu == "Central de Análises":
                             else:
                                 st.write("🎉 *Nenhuma pendência documental!*")
 
+                        # Exibição de Criticidade de Pendências (Se aplicável à categoria)
+                        crit = res.get("pendencias_criticas", {})
+                        if any(crit.values()):
+                            st.markdown("---")
+                            st.markdown("### 🚦 Avaliação de Criticidade das Pendências")
+                            if crit.get("Grave"):
+                                st.error(f"**Pendências Graves (Impedimentos):** {', '.join(crit['Grave'])}")
+                            if crit.get("Média"):
+                                st.warning(f"**Pendências Médias (Prazo de Adequação):** {', '.join(crit['Média'])}")
+                            if crit.get("Leve"):
+                                st.info(f"**Pendências Leves (Cadastro/Administrativo):** {', '.join(crit['Leve'])}")
+
                         st.markdown("---")
                         st.markdown("### ✉️ Resposta Pronta para Envio")
                         if modo_analise == "Análise Pontual (Documento Avulso)":
@@ -487,10 +550,10 @@ if menu == "Central de Análises":
                             texto_email = (
                                 f"Prezados,\n\nRecebemos a documentação de compliance de {razao_social}.\n\n"
                                 f"STATUS DA HOMOLOGAÇÃO: {res['status']} ({res['progresso']}% concluído)\n\n"
-                                f"DOCUMENTOS RECEBIDOS ({len(res['obrig_entregues'])}):\n"
+                                f"DOCUMENTOS OBRIGATÓRIOS RECEBIDOS ({len(res['obrig_entregues'])}):\n"
                                 + "\n".join([f"- {d}" for d in res["obrig_entregues"]])
                                 + (f"\n\nDOCUMENTOS OPCIONAIS RECEBIDOS:\n" + "\n".join([f"- {d}" for d in res["opc_entregues"]]) if res["opc_entregues"] else "")
-                                + f"\n\nPENDÊNCIAS PARA CONCLUIR A HOMOLOGAÇÃO ({len(res['obrig_pendentes'])}):\n"
+                                + f"\n\nPENDÊNCIAS OBRIGATÓRIAS PARA HOMOLOGAÇÃO ({len(res['obrig_pendentes'])}):\n"
                                 + "\n".join([f"- {d}" for d in res["obrig_pendentes"]])
                                 + "\n\nFicamos no aguardo dos itens pendentes para finalização do cadastro.\n\nAtenciosamente,\nEquipe de Compliance Yattó"
                             )
@@ -507,7 +570,7 @@ elif menu == "Matriz de Requisitos Yattó":
     for cat, reqs in REQUISITOS.items():
         with st.expander(f"{cat}"):
             st.write(
-                "**Documentos Exigidos:**",
+                "**Documentos Obrigatórios:**",
                 ", ".join(reqs.get("obrigatorios", [])) if reqs.get("obrigatorios") else "Nenhum"
             )
             if reqs.get("opcionais"):
@@ -515,6 +578,10 @@ elif menu == "Matriz de Requisitos Yattó":
                     "**Documentos Opcionais:**",
                     ", ".join(reqs.get("opcionais", []))
                 )
+            if reqs.get("criticidade"):
+                st.markdown("**Níveis de Criticidade de Risco:**")
+                for nivel, docs in reqs["criticidade"].items():
+                    st.write(f"- **{nivel}:** {', '.join(docs)}")
 
 elif menu == "Sobre o Decreto 12.688/2025":
     st.title("Segurança Jurídica & Decreto nº 12.688/2025")

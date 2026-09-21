@@ -8,7 +8,7 @@ import pandas as pd
 import streamlit as st
 
 # ==============================================================================
-# 1. CONFIGURAÇÃO DA PÁGINA & ESTILO VISUAL YATTÓ
+# 1. CONFIGURAÇÃO DA PÁGINA & ESTILO VISUAL INSPIRADO NO SITE YATTÓ
 # ==============================================================================
 st.set_page_config(
     page_title="Central de Compliance | Yattó",
@@ -17,11 +17,13 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# Imagem de Fundo embutida em Base64 (estilo institucional yatto.com.br)
 BACKGROUND_B64 = """iVBORw0KGgoAAAANSUhEUgAAA8YAAAHRCAYAAACo3aDLAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAP+lSURBVHhe7N0HWBRH3wfwX/pSpSsgNkBQUBAVGxZsWRNLIjY0/mKMUYstUWPUaGJLL/42Y4s1GqPGXhDFXhBsqChFUR4sCNL7s7s3x1044O6O0f+/3/P8/e21+m3szszN3fA8"""
 
 st.markdown(
     f"""
     <style>
+    /* Estilo de fundo inspirado no site institucional yatto.com.br */
     .stApp {{
         background: url("data:image/png;base64,{BACKGROUND_B64}") no-repeat center center fixed;
         background-size: cover;
@@ -32,13 +34,25 @@ st.markdown(
         background-size: cover;
     }}
     
+    /* Barra lateral estilizada */
     div[data-testid="stSidebar"] {{
-        background-color: rgba(244, 246, 248, 0.88);
+        background-color: rgba(244, 246, 248, 0.92);
         border-right: 2px solid #009BDB;
     }}
 
+    /* Container do Logotipo na Sidebar */
+    .logo-container {{
+        text-align: center;
+        padding: 15px 10px;
+        background-color: #FFFFFF;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }}
+
+    /* Cartões principais */
     .stMainBlockContainer {{
-        background-color: rgba(255, 255, 255, 0.90);
+        background-color: rgba(255, 255, 255, 0.92);
         border-radius: 12px;
         padding: 25px;
         margin-top: 15px;
@@ -48,6 +62,7 @@ st.markdown(
     .main-header {{ font-size: 26px; font-weight: bold; color: #009BDB; margin-bottom: 5px; }}
     .sub-header {{ font-size: 14px; color: #87868A; margin-bottom: 25px; }}
     
+    /* Botões Yattó */
     .stButton>button {{ 
         background-color: #009BDB; 
         color: #FFFFFF; 
@@ -94,7 +109,45 @@ st.markdown(
 )
 
 # ==============================================================================
-# 2. MATRIZ INTEGRADA DE REQUISITOS E FAMÍLIAS DE CNAE COMPATÍVEIS
+# 2. LOGOTIPO DA YATTÓ NA BARRA LATERAL (ACIMA DA NAVEGAÇÃO)
+# ==============================================================================
+st.sidebar.markdown(
+    """
+    <div class="logo-container">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 140" width="100%">
+            <defs>
+                <linearGradient id="yattoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#009BDB" />
+                    <stop offset="100%" stop-color="#93BA1F" />
+                </linearGradient>
+            </defs>
+            <g fill="none" stroke-width="8" stroke-linecap="round">
+                <!-- y -->
+                <path d="M 40,35 L 70,85 C 60,115 45,125 30,125" stroke="#009BDB" />
+                <path d="M 70,35 L 55,60" stroke="#009BDB" />
+                <!-- a -->
+                <path d="M 125,50 C 105,50 95,65 95,75 C 95,88 108,98 122,98 C 135,98 142,88 142,75 L 142,98" stroke="#009BDB" />
+                <!-- t1 -->
+                <path d="M 160,25 L 160,98" stroke="#009BDB" />
+                <path d="M 148,42 L 175,42" stroke="#009BDB" />
+                <!-- t2 -->
+                <path d="M 195,25 L 195,98" stroke="#009BDB" />
+                <path d="M 183,42 L 210,42" stroke="#009BDB" />
+                <!-- o + Folha -->
+                <path d="M 270,70 C 270,88 255,99 238,99 C 220,99 208,85 208,70 C 208,52 222,42 238,42 C 255,42 270,55 270,70 Z" stroke="url(#yattoGrad)" />
+                <path d="M 262,45 C 275,25 292,20 292,20 C 292,20 290,40 272,52 Z" fill="#93BA1F" stroke="#93BA1F" stroke-width="2" />
+            </g>
+            <!-- Tagline -->
+            <text x="310" y="52" font-family="'Work Sans', sans-serif" font-size="28" fill="#009BDB" font-weight="300">economia</text>
+            <text x="310" y="82" font-family="'Work Sans', sans-serif" font-size="28" fill="#009BDB" font-weight="300">circular</text>
+        </svg>
+    </div>
+""",
+    unsafe_allow_html=True,
+)
+
+# ==============================================================================
+# 3. MATRIZ INTEGRADA DE REQUISITOS E FAMÍLIAS DE CNAE
 # ==============================================================================
 EMOJIS_CATEGORIAS = {
     "Cooperativas": "🤝",
@@ -105,7 +158,6 @@ EMOJIS_CATEGORIAS = {
     "Operador Logístico de Óleo (Cargill)": "🛢️"
 }
 
-# Dicionário de CNAEs de Referência para Análise Contextual
 FAMILIAS_CNAE = {
     "COLETA_RECURSOS": ["3811", "3812"],
     "RECUPERACAO_MATERIAIS": ["3831", "3832", "3839"],
@@ -266,7 +318,6 @@ TODOS_DOCUMENTOS_POSSIVEIS = sorted(list(set(
     for doc in lista_docs
 )))
 
-# MAPEIRO DE ATIVIDADES OPERACIONAIS POR CATEGORIA
 OPCOES_ATIVIDADES_POR_CATEGORIA = {
     "Cooperativas": [
         "Recepção, Triagem e Comercialização de Recicláveis",
@@ -302,7 +353,7 @@ OPCOES_ATIVIDADES_POR_CATEGORIA = {
 }
 
 # ==============================================================================
-# 3. LEITURA DE PDFS, ZIPS & EXTRAÇÃO INTELIGENTE DE DADOS
+# 4. LEITURA DE PDFS, ZIPS & EXTRAÇÃO INTELIGENTE DE DADOS
 # ==============================================================================
 
 def extrair_texto_pdf(file_bytes):
@@ -339,14 +390,13 @@ def extrair_cnpjs(texto):
     return list(set(re.findall(padrao, texto)))
 
 def extrair_cnaes(texto):
-    """Extrai códigos no formato CNAE 00.00-0-00 ou 0000-0/00"""
     padrao = r"\b\d{4}-\d/\d{2}\b|\b\d{2}\.\d{2}-\d-\d{2}\b"
     encontrados = re.findall(padrao, texto)
     cnaes_limpos = []
     for c in encontrados:
         c_clean = re.sub(r"\D", "", c)
         if len(c_clean) >= 4:
-            cnaes_limpos.append(c_clean[:4]) # Pega os 4 primeiros dígitos do grupo/família
+            cnaes_limpos.append(c_clean[:4])
     return list(set(cnaes_limpos))
 
 def extrair_datas_validade(texto):
@@ -369,14 +419,10 @@ def extrair_datas_validade(texto):
     return datas_vencimento
 
 # ==============================================================================
-# 4. MOTOR DE ANÁLISE DE COMPLIANCE & AVALIAÇÃO DE CNAE
+# 5. MOTOR DE ANÁLISE DE COMPLIANCE & AVALIAÇÃO DE CNAE
 # ==============================================================================
 
 def avaliar_compatibilidade_cnae(cnaes_encontrados, atividades_selecionadas):
-    """
-    Avalia a compatibilidade dos CNAEs encontrados (principal/secundários)
-    com as atividades efetivamente realizadas.
-    """
     if not cnaes_encontrados:
         return "🟡 Necessita validação", "Nenhum código CNAE formatado foi extraído automaticamente do Cartão CNPJ. Requer conferência visual."
 
@@ -441,7 +487,6 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
     cnpjs_unicos = list(set(cnpjs_encontrados))
     cnaes_unicos = list(set(cnaes_encontrados))
 
-    # Avaliação do CNPJ e CNAE
     status_cnae, parecer_cnae = avaliar_compatibilidade_cnae(cnaes_unicos, atividades_selecionadas)
 
     hoje = datetime.now()
@@ -502,7 +547,7 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
     }
 
 # ==============================================================================
-# 5. INTERFACE DO USUÁRIO (STREAMLIT)
+# 6. INTERFACE DO USUÁRIO (STREAMLIT)
 # ==============================================================================
 
 st.sidebar.title("Navegação")
@@ -550,7 +595,6 @@ if menu == "Central de Análises":
         )
         categoria = st.selectbox("Categoria do Fornecedor", list(REQUISITOS.keys()))
 
-        # Mapeamento dinâmico da Atividade Efetivamente Realizada
         atividades_opcoes = OPCOES_ATIVIDADES_POR_CATEGORIA.get(categoria, [])
         atividades_selecionadas = st.multiselect(
             "Atividade(s) efetivamente realizada(s) na operação:",
@@ -615,7 +659,6 @@ if menu == "Central de Análises":
                         if modo_analise != "Análise Pontual (Documento Avulso)":
                             st.progress(res["progresso"] / 100)
 
-                        # Painel Dedicado à Análise de CNPJ / CNAE
                         st.markdown("---")
                         st.markdown("### 🏢 Análise de CNPJ & Compatibilidade de CNAE")
                         st.write(f"**Resultado:** {res['status_cnae']}")

@@ -600,10 +600,10 @@ if menu == "Central de Análises":
             "Upload dos arquivos (PDFs ou pasta ZIP):", type=["pdf", "zip"], accept_multiple_files=True
         )
 
-        btn_analisar = st.button("🔍 Executar Análise de Compliance")
+        btn_analisar = st.button("🔍 Executar Análise")
 
     with col_right:
-        st.subheader("Parecer da Análise de Compliance")
+        st.subheader("Parecer da Análise")
 
         if btn_analisar:
             if not razao_social:
@@ -727,7 +727,7 @@ if menu == "Central de Análises":
                         )
 
 elif menu == "Matriz de Requisitos Yattó":
-    st.title("Matriz Geral de Requisitos de Compliance")
+    st.title("Matriz Geral de Requisitos")
     st.write("Consulte as exigências documentais divididas por categoria:")
 
     for cat, reqs in REQUISITOS.items():

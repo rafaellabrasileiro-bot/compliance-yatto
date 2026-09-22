@@ -214,7 +214,7 @@ REQUISITOS = {
             "AATIPP",
             "Licença ou Certificado Ambiental Estadual",
             "Registro Nacional de Transportadores Rodoviários de Cargas (RNTRC)",
-            "Seguro Ambiental de Carga / PAE",
+            "Seguro Ambiental de Carga/PAE",
             "Amostragem de Treinamento MOPP",
             "Licenciamento do Veículo (CRLV)"
         ],
@@ -247,7 +247,7 @@ REQUISITOS = {
             "Relatório de Inspeção de Caldeiras",
             "Certificado de Treinamento de Segurança na Operação de Caldeiras – NR 13",
             "Certificado de Destinação Final da Borra Orgânica",
-            "Seguro Ambiental de Carga / PAE"
+            "Seguro Ambiental de Carga/PAE"
         ],
         "opcionais": [
             "Nota Fiscal de Venda do Óleo",
@@ -278,7 +278,7 @@ REQUISITOS = {
                 "Relatório de Inspeção de Caldeiras",
                 "Certificado de Treinamento de Segurança na Operação de Caldeiras – NR 13",
                 "Certificado de Destinação Final da Borra Orgânica",
-                "Seguro Ambiental de Carga / PAE"
+                "Seguro Ambiental de Carga/PAE"
             ],
             "🟢 Leve": [
                 "Nota Fiscal de Venda do Óleo",
@@ -298,7 +298,7 @@ PADRONIZACAO_NOME_DOC = {
     "Certificado de Regularidade IBAMA – CTF/APP": "Certificado de Regularidade - CTF IBAMA",
     "Certidão Negativa de Débitos Trabalhistas – CNDT": "Certidão Negativa de Débitos Trabalhistas (CNDT)",
     "Certificado de Regularidade do Fundo de Garantia por Tempo de Serviço – FGTS": "Certificado de Regularidade do FGTS",
-    "Plano de Atendimento a Emergências – PAE": "Seguro Ambiental de Carga / PAE",
+    "Plano de Atendimento a Emergências – PAE": "Seguro Ambiental de Carga/PAE",
     "Certificado de Treinamento – NR01, NR06 e/ou NR12": "Certificado de Treinamento (NR01, NR06 e/ou NR12)"
 }
 
@@ -501,11 +501,11 @@ def analisar_documentos(categoria, lista_pdfs, modo_analise, doc_especifico_sele
     pendencias_criticas = {"Grave": [], "Médio": [], "Leve": []}
     if matriz_crit and obrig_pendentes:
         for p in obrig_pendentes:
-            if p in matriz_crit.get("🔴 Grave", []):
+            if p in matriz_crit.get("Grave", []):
                 pendencias_criticas["Grave"].append(p)
-            elif p in matriz_crit.get("🟡 Médio", []):
+            elif p in matriz_crit.get("Médio", []):
                 pendencias_criticas["Médio"].append(p)
-            elif p in matriz_crit.get("🟢 Leve", []):
+            elif p in matriz_crit.get("Leve", []):
                 pendencias_criticas["Leve"].append(p)
 
     if modo_analise == "Análise Pontual (Documento Avulso)":

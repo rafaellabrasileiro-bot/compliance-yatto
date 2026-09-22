@@ -750,7 +750,7 @@ elif menu == "Matriz de Requisitos Yattó":
                     )
 
 elif menu == "Sobre o Decreto 12.688/2025":
-    st.title("Segurança Jurídica & Decreto nº 12.688/2025")
+    st.title("Segurança Jurídica")
     st.write(
         "A Yattó atua como infraestrutura de soluções em economia circular oferecendo diagnósticos, inteligência de dados e execução operacional contínua."
     )

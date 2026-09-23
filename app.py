@@ -114,7 +114,7 @@ st.markdown(
 )
 
 # ==============================================================================
-# 2. LOGOTIPO OFICIAL DA YATTÓ NA BARRA LATERAL (ACIMA DA NAVEGAÇÃO)
+# 2. LOGOTIPO OFICIAL DA YATTÓ NA BARRA LATERAL
 # ==============================================================================
 st.sidebar.markdown(
     """
@@ -126,7 +126,7 @@ st.sidebar.markdown(
 )
 
 # ==============================================================================
-# 3. MATRIZ DE REQUISITOS (ABAS / MÓDULOS DE REQUISITOS GERAIS MANTIDOS)
+# 3. MATRIZ INTEGRADA DE REQUISITOS, CATEGORIAS E CNAES DETALHADOS
 # ==============================================================================
 EMOJIS_CATEGORIAS = {
     "Cooperativas": "🤝",
@@ -135,6 +135,31 @@ EMOJIS_CATEGORIAS = {
     "Transportador - Pessoa Física": "🚛",
     "Transportador (Resíduos Perigosos)": "☢️",
     "Operador Logístico de Óleo (Cargill)": "🛢️"
+}
+
+# Tabela Detalhada de Mapeamento de CNAEs
+MAPEAMENTO_CNAE_COMPATIBILIDADE = {
+    "4930-2/01": ("Transportador - Pessoa Jurídica", "Transporte rodoviário de cargas não perigosas"),
+    "4930-2/02": ("Transportador - Pessoa Jurídica", "Transporte rodoviário de cargas não perigosas (intermunicipal/interestadual)"),
+    "4930-2/03": ("Transportador (Resíduos Perigosos)", "Transporte rodoviário de produtos e resíduos perigosos"),
+    "3811-4/00": ("Cooperativas", "Coleta de resíduos não perigosos"),
+    "3812-2/00": ("Transportador (Resíduos Perigosos)", "Coleta de resíduos perigosos"),
+    "3821-1/00": ("Destinador", "Tratamento e disposição de resíduos não perigosos"),
+    "3822-0/00": ("Destinador", "Tratamento e disposição de resíduos perigosos"),
+    "3832-7/00": ("Destinador", "Recuperação de materiais plásticos"),
+    "3831-9/01": ("Destinador", "Recuperação de sucatas de alumínio"),
+    "3831-9/99": ("Destinador", "Recuperação de materiais metálicos diversos"),
+    "3839-4/99": ("Destinador", "Recuperação de materiais não especificados"),
+    "3839-4/01": ("Destinador", "Tratamento/recuperação de resíduos orgânicos"),
+    "3900-5/00": ("Destinador", "Descontaminação e serviços de gestão de resíduos"),
+    "4687-7/01": ("Cooperativas", "Comércio atacadista de resíduos de papel e papelão"),
+    "4687-7/02": ("Cooperativas", "Comércio atacadista de resíduos plásticos"),
+    "4687-7/03": ("Cooperativas", "Comércio atacadista de resíduos metálicos e sucatas"),
+    "5211-7/01": ("Operador Logístico de Óleo (Cargill)", "Armazéns gerais"),
+    "5211-7/99": ("Operador Logístico de Óleo (Cargill)", "Armazenamento/guarda de materiais de terceiros"),
+    "5250-8/03": ("Operador Logístico de Óleo (Cargill)", "Agenciamento de cargas"),
+    "5250-8/04": ("Operador Logístico de Óleo (Cargill)", "Organização, agenciamento ou operação logística de cargas"),
+    "5250-8/05": ("Operador Logístico de Óleo (Cargill)", "Operador de transporte multimodal - OTM")
 }
 
 REQUISITOS = {
@@ -280,56 +305,38 @@ REQUISITOS = {
     }
 }
 
-# TABELA DE MAPEAMENTO DE CNAES PARA IDENTIFICAÇÃO AUTOMÁTICA
-MAPEAMENTO_CNAE_COMPATIBILIDADE = {
-    "4930-2/01": ("Transportador não perigoso", "Transporte rodoviário de cargas não perigosas"),
-    "4930-2/02": ("Transportador não perigoso", "Transporte rodoviário de cargas não perigosas (intermunicipal/interestadual)"),
-    "4930-2/03": ("Transportador perigoso", "Transporte rodoviário de produtos e resíduos perigosos"),
-    "3811-4/00": ("Coletor de resíduos", "Coleta de resíduos não perigosos"),
-    "3812-2/00": ("Coletor de resíduos perigosos", "Coleta de resíduos perigosos"),
-    "3821-1/00": ("Destinador não perigoso", "Tratamento e disposição de resíduos não perigosos"),
-    "3822-0/00": ("Destinador perigoso", "Tratamento e disposição de resíduos perigosos"),
-    "3832-7/00": ("Reciclador de plástico", "Recuperação de materiais plásticos"),
-    "3831-9/01": ("Reciclador de metais", "Recuperação de sucatas de alumínio"),
-    "3831-9/99": ("Reciclador de metais", "Recuperação de materiais metálicos diversos"),
-    "3839-4/99": ("Reciclador de outros materiais", "Recuperação de materiais não especificados"),
-    "3839-4/01": ("Compostagem", "Tratamento/recuperação de resíduos orgânicos"),
-    "3900-5/00": ("Descontaminador / Gestão", "Descontaminação e serviços especializados de gestão de resíduos"),
-    "4687-7/01": ("Comercializador de resíduos", "Comércio atacadista de resíduos de papel e papelão"),
-    "4687-7/02": ("Comercializador de resíduos", "Comércio atacadista de resíduos plásticos"),
-    "4687-7/03": ("Comercializador de resíduos", "Comércio atacadista de resíduos metálicos e sucatas"),
-    "5211-7/01": ("Armazenador", "Armazéns gerais"),
-    "5211-7/99": ("Armazenador", "Armazenamento/guarda de materiais de terceiros"),
-    "5250-8/03": ("Operador logístico", "Agenciamento de cargas"),
-    "5250-8/04": ("Operador logístico", "Organização, agenciamento ou operação logística de cargas"),
-    "5250-8/05": ("Operador logístico", "Operador de transporte multimodal - OTM"),
-    "5212-5/00": ("Apoio logístico", "Carga e descarga de mercadorias"),
-    "5229-0/99": ("Apoio logístico", "Atividades auxiliares dos transportes terrestres"),
-    "3701-1/00": ("Serviço ambiental", "Esgotamento sanitário e serviços relacionados"),
-    "3600-6/01": ("Serviço ambiental", "Serviços ambientais de captação/tratamento de água"),
-    "3600-6/02": ("Serviço ambiental", "Distribuição de água por caminhões")
+# PALAVRAS-CHAVE FLEXÍVEIS PARA DETECÇÃO EM TEXTOS PDF
+PALAVRAS_CHAVE_DOCS = {
+    "Cartão CNPJ": ["cnpj", "comprovante de inscrição", "receita federal", "situação cadastral"],
+    "Inscrição Estadual Ativa": ["inscrição estadual", "sintegra", "ie ativa", "inscrição no cadastro de contribuintes"],
+    "Alvará de Funcionamento": ["alvará", "alvara", "licença de funcionamento", "alvará de licença"],
+    "Dispensa ou Licença Ambiental": ["licença ambiental", "licenca ambiental", "cetesb", "ibama", "dispensa de licença", "cadri", "operacao", "instalacao"],
+    "Licença Sanitária": ["sanitária", "sanitaria", "vigilância sanitária", "visa"],
+    "AVCB/CLCB": ["avcb", "clcb", "bombeiros", "corpo de bombeiros", "vistoria"],
+    "Estatuto": ["estatuto", "estatuto social", "cooperativa"],
+    "Última Ata de Eleição": ["ata", "ata de eleição", "eleicao", "assembleia"],
+    "Certidão Negativa de Débitos Trabalhistas (CNDT)": ["cndt", "trabalhistas", "justiça do trabalho"],
+    "CND Federal": ["receita federal", "débitos relativos a tributos federais", "certidão conjunta"],
+    "CND Estadual": ["fazenda estadual", "sefaz", "débitos estaduais"],
+    "CND Municipal": ["prefeitura", "débitos municipais", "tributos municipais"],
+    "Certificado de Regularidade - CTF IBAMA": ["ctf", "ibama", "certificado de regularidade"],
+    "Certificado de Regularidade do FGTS": ["fgts", "caixa econômica", "crf"],
+    "RNTRC ANTT": ["antt", "rntrc", "transportador rodoviário"],
+    "Carteira Nacional de Habilitação (CNH)": ["cnh", "carteira nacional de habilitação", "motorista"],
+    "Licenciamento do Veículo (CRLV)": ["crlv", "licenciamento", "detran", "veículo"],
+    "PGR – Plano de Gerenciamento de Riscos": ["pgr", "gerenciamento de riscos"],
+    "PCMSO – Programa de Controle Médico de Saúde Ocupacional": ["pcmso", "saúde ocupacional"],
+    "Atestados de Saúde Ocupacional – ASO": ["aso", "atestado de saúde"],
+    "Ficha de Entrega de EPI’s": ["epi", "equipamento de proteção"],
+    "Seguro Ambiental de Carga / PAE": ["pae", "plano de atendimento", "seguro ambiental"]
 }
 
-PADRONIZACAO_NOME_DOC = {
-    "Comprovante de Inscrição e de Situação Cadastral – CNPJ": "Cartão CNPJ",
-    "Inscrição Estadual": "Inscrição Estadual Ativa",
-    "Licença Ambiental": "Dispensa ou Licença Ambiental",
-    "AVCB ou CLCB": "AVCB/CLCB",
-    "Certificado de Regularidade IBAMA – CTF/APP": "Certificado de Regularidade - CTF IBAMA",
-    "Certidão Negativa de Débitos Trabalhistas – CNDT": "Certidão Negativa de Débitos Trabalhistas (CNDT)",
-    "Certificado de Regularidade do Fundo de Garantia por Tempo de Serviço – FGTS": "Certificado de Regularidade do FGTS",
-    "Plano de Atendimento a Emergências – PAE": "Seguro Ambiental de Carga / PAE",
-    "Certificado de Treinamento – NR01, NR06 e/ou NR12": "Certificado de Treinamento (NR01, NR06 e/ou NR12)"
-}
-
-TODOS_DOCUMENTOS_SET = set()
-for cat_data in REQUISITOS.values():
-    for lista_docs in [cat_data.get("obrigatorios", []), cat_data.get("opcionais", [])]:
-        for doc in lista_docs:
-            doc_padronizado = PADRONIZACAO_NOME_DOC.get(doc, doc)
-            TODOS_DOCUMENTOS_SET.add(doc_padronizado)
-
-TODOS_DOCUMENTOS_POSSIVEIS = sorted(list(TODOS_DOCUMENTOS_SET))
+TODOS_DOCUMENTOS_POSSIVEIS = sorted(list(set(
+    doc
+    for cat_data in REQUISITOS.values()
+    for lista_docs in [cat_data.get("obrigatorios", []), cat_data.get("opcionais", [])]
+    for doc in lista_docs
+)))
 
 # ==============================================================================
 # 4. LEITURA DE PDFS, ZIPS & EXTRAÇÃO INTELIGENTE DE DADOS
@@ -369,7 +376,6 @@ def extrair_cnpjs(texto):
     return list(set(re.findall(padrao, texto)))
 
 def extrair_cnaes_completos(texto):
-    """Extrai CNAEs no formato 0000-0/00 ou 00.00-0-00"""
     padrao = r"\b\d{4}-\d/\d{2}\b|\b\d{2}\.\d{2}-\d-\d{2}\b"
     encontrados = re.findall(padrao, texto)
     cnaes_formatados = []
@@ -406,6 +412,19 @@ def identificar_enquadramentos_cnae(cnaes_encontrados):
                 enquadramentos[cat] = []
             enquadramentos[cat].append(f"{cnae} - {desc}")
     return enquadramentos
+
+def validar_presenca_documento(nome_doc, texto_acumulado, cnpjs_unicos):
+    """
+    Verifica se um documento está presente no texto do lote
+    usando busca por palavras-chave flexíveis e validação de CNPJ.
+    """
+    if nome_doc == "Cartão CNPJ" and len(cnpjs_unicos) > 0:
+        return True
+
+    texto_lower = texto_acumulado.lower()
+    chaves = PALAVRAS_CHAVE_DOCS.get(nome_doc, [nome_doc.lower().split()[0]])
+
+    return any(chave in texto_lower for chave in chaves)
 
 # ==============================================================================
 # 5. INTERFACE DO USUÁRIO (STREAMLIT)
@@ -514,8 +533,16 @@ if menu == "Central de Análises":
 
             st.markdown("---")
             col_conf1, col_conf2 = st.columns(2)
+            
+            # Pré-selecionar categoria automaticamente se o CNAE tiver mapeado uma única opção
+            index_default_cat = 0
+            if d['enquadramentos']:
+                primeira_cat = list(d['enquadramentos'].keys())[0]
+                if primeira_cat in REQUISITOS:
+                    index_default_cat = list(REQUISITOS.keys()).index(primeira_cat)
+
             with col_conf1:
-                categoria = st.selectbox("Categoria do Fornecedor na Operação:", list(REQUISITOS.keys()))
+                categoria = st.selectbox("Categoria do Fornecedor na Operação:", list(REQUISITOS.keys()), index=index_default_cat)
             with col_conf2:
                 caracteristica_fornecedor = st.selectbox("Característica do Fornecedor:", ["Pessoa Jurídica (Empresa)", "Cooperativa / Associação", "Pessoa Física (Autônomo)"])
 
@@ -536,14 +563,9 @@ if menu == "Central de Análises":
                         if "Estatuto" not in obrigatorios_exigidos: obrigatorios_exigidos.append("Estatuto")
                         if "Última Ata de Eleição" not in obrigatorios_exigidos: obrigatorios_exigidos.append("Última Ata de Eleição")
 
-                total_exigido = list(set(obrigatorios_exigidos + opcionais_exigidos))
-
                 docs_encontrados = []
-                texto_busca = d['texto_acumulado'].lower()
-
-                for doc in total_exigido:
-                    termo = doc.lower().split()[0]
-                    if termo in texto_busca:
+                for doc in set(obrigatorios_exigidos + opcionais_exigidos):
+                    if validar_presenca_documento(doc, d['texto_acumulado'], d['cnpjs']):
                         docs_encontrados.append(doc)
 
                 hoje = datetime.now()
@@ -661,7 +683,7 @@ if menu == "Central de Análises":
 
 elif menu == "Matriz de Requisitos Yattó":
     st.title("Matriz Geral de Requisitos de Compliance")
-    st.write("Consulte as exigências documentais divididas por categoria:")
+    st.write("Consulte as exigências documentais divididas por categoria de fornecedor:")
 
     for cat, reqs in REQUISITOS.items():
         emoji = EMOJIS_CATEGORIAS.get(cat, "")

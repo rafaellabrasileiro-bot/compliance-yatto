@@ -20,27 +20,16 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    /* Estilo de fundo do aplicativo inteiro (Branco Limpo) */
-    .stApp {
-        background-color: #FFFFFF !important;
-    }
+    .stApp { background-color: #FFFFFF !important; }
+    [data-testid="stAppViewContainer"] { background-color: #FFFFFF !important; }
 
-    [data-testid="stAppViewContainer"] {
-        background-color: #FFFFFF !important;
-    }
-
-    /* Barra lateral de Navegação (Sidebar) com FUNDO EXCLUSIVAMENTE BRANCO */
     section[data-testid="stSidebar"], div[data-testid="stSidebar"] {
         background-color: #FFFFFF !important;
         background-image: none !important;
         border-right: 2px solid #009BDB;
     }
+    section[data-testid="stSidebar"] > div:first-child { background-color: #FFFFFF !important; }
 
-    section[data-testid="stSidebar"] > div:first-child {
-        background-color: #FFFFFF !important;
-    }
-
-    /* Container do Logotipo Superior na Sidebar */
     .logo-container {
         text-align: center;
         padding: 10px;
@@ -48,13 +37,8 @@ st.markdown(
         border-radius: 8px;
         margin-bottom: 20px;
     }
+    .logo-container img { max-width: 100%; height: auto; }
 
-    .logo-container img {
-        max-width: 100%;
-        height: auto;
-    }
-
-    /* Cartões de verificação com fundo branco e bordas suaves Yattó */
     .stMainBlockContainer {
         background-color: #FFFFFF !important;
         border-radius: 12px;
@@ -67,7 +51,6 @@ st.markdown(
     .main-header { font-size: 26px; font-weight: bold; color: #009BDB; margin-bottom: 5px; }
     .sub-header { font-size: 14px; color: #87868A; margin-bottom: 25px; }
     
-    /* Botões Yattó */
     .stButton>button { 
         background-color: #009BDB; 
         color: #FFFFFF; 
@@ -77,10 +60,7 @@ st.markdown(
         padding: 8px 16px;
         transition: all 0.3s ease;
     }
-    .stButton>button:hover { 
-        background-color: #240085; 
-        color: #FFFFFF; 
-    }
+    .stButton>button:hover { background-color: #240085; color: #FFFFFF; }
     
     .card-status {
         padding: 15px;
@@ -89,25 +69,13 @@ st.markdown(
         text-align: center;
         margin-bottom: 15px;
     }
-    .status-approved { 
-        background-color: #93BA1F; 
-        color: #FFFFFF; 
-        border: 1px solid #93BA1F; 
-    }
-    .status-partial { 
-        background-color: #D1DD00; 
-        color: #240085; 
-        border: 1px solid #D1DD00; 
-    }
-    .status-rejected { 
-        background-color: #F8D7DA; 
-        color: #721C24; 
-        border: 1px solid #F5C6CB; 
-    }
+    .status-conforme { background-color: #93BA1F; color: #FFFFFF; border: 1px solid #93BA1F; }
+    .status-ressalva { background-color: #FFC107; color: #212529; border: 1px solid #FFC107; }
+    .status-pendente { background-color: #FD7E14; color: #FFFFFF; border: 1px solid #FD7E14; }
+    .status-nao-conforme { background-color: #DC3545; color: #FFFFFF; border: 1px solid #DC3545; }
+    .status-nao-aplicavel { background-color: #6C757D; color: #FFFFFF; border: 1px solid #6C757D; }
 
-    .stProgress > div > div > div > div {
-        background-color: #93BA1F;
-    }
+    .stProgress > div > div > div > div { background-color: #93BA1F; }
     </style>
 """,
     unsafe_allow_html=True,
@@ -126,7 +94,7 @@ st.sidebar.markdown(
 )
 
 # ==============================================================================
-# 3. MATRIZ INTEGRADA DE REQUISITOS, CATEGORIAS E CNAES DETALHADOS
+# 3. MATRIZ INTEGRADA DE REQUISITOS, CATEGORIAS E DADOS DE COMPLIANCE
 # ==============================================================================
 EMOJIS_CATEGORIAS = {
     "Cooperativas": "🤝",
@@ -137,7 +105,6 @@ EMOJIS_CATEGORIAS = {
     "Operador Logístico de Óleo (Cargill)": "🛢️"
 }
 
-# Tabela Detalhada de Mapeamento de CNAEs
 MAPEAMENTO_CNAE_COMPATIBILIDADE = {
     "4930-2/01": ("Transportador - Pessoa Jurídica", "Transporte rodoviário de cargas não perigosas"),
     "4930-2/02": ("Transportador - Pessoa Jurídica", "Transporte rodoviário de cargas não perigosas (intermunicipal/interestadual)"),
@@ -303,46 +270,44 @@ REQUISITOS = {
     }
 }
 
-# PALAVRAS-CHAVE FLEXÍVEIS PARA DETECÇÃO EM TEXTOS PDF
 PALAVRAS_CHAVE_DOCS = {
     "Cartão CNPJ": ["cnpj", "comprovante de inscrição", "receita federal", "situação cadastral"],
-    "Comprovante de Inscrição e de Situação Cadastral – CNPJ": ["cnpj", "comprovante de inscrição", "receita federal", "situação cadastral"],
-    "Inscrição Estadual Ativa": ["inscrição estadual", "sintegra", "ie ativa", "inscrição no cadastro de contribuintes"],
-    "Inscrição Estadual": ["inscrição estadual", "sintegra", "ie ativa", "inscrição no cadastro de contribuintes"],
+    "Comprovante de Inscrição e de Situação Cadastral – CNPJ": ["cnpj", "comprovante de inscrição", "receita federal"],
+    "Inscrição Estadual Ativa": ["inscrição estadual", "sintegra", "ie ativa", "cadastro de contribuintes"],
+    "Inscrição Estadual": ["inscrição estadual", "sintegra", "ie ativa"],
     "Alvará de Funcionamento": ["alvará", "alvara", "licença de funcionamento", "alvará de licença"],
-    "Dispensa ou Licença Ambiental": ["licença ambiental", "licenca ambiental", "cetesb", "ibama", "dispensa de licença", "cadri", "operacao", "instalacao"],
+    "Dispensa ou Licença Ambiental": ["licença ambiental", "licenca ambiental", "cetesb", "ibama", "dispensa de licença", "cadri", "operacao"],
     "Licença Ambiental": ["licença ambiental", "licenca ambiental", "cetesb", "ibama", "dispensa de licença", "cadri"],
     "Licença Sanitária": ["sanitária", "sanitaria", "vigilância sanitária", "visa"],
     "AVCB/CLCB": ["avcb", "clcb", "bombeiros", "corpo de bombeiros", "vistoria"],
-    "AVCB ou CLCB": ["avcb", "clcb", "bombeiros", "corpo de bombeiros", "vistoria"],
+    "AVCB ou CLCB": ["avcb", "clcb", "bombeiros", "corpo de bombeiros"],
     "Estatuto": ["estatuto", "estatuto social", "cooperativa"],
     "Última Ata de Eleição": ["ata", "ata de eleição", "eleicao", "assembleia"],
     "Certidão Negativa de Débitos Trabalhistas": ["cndt", "trabalhistas", "justiça do trabalho"],
-    "Certidão Negativa de Débitos Trabalhistas – CNDT": ["cndt", "trabalhistas", "justiça do trabalho"],
+    "Certidão Negativa de Débitos Trabalhistas – CNDT": ["cndt", "trabalhistas"],
     "CND Federal, Estadual e Municipal": ["receita federal", "sefaz", "prefeitura", "débitos", "certidão conjunta"],
-    "CND Federal": ["receita federal", "débitos relativos a tributos federais", "certidão conjunta"],
+    "CND Federal": ["receita federal", "tributos federais", "certidão conjunta"],
     "CND Estadual": ["fazenda estadual", "sefaz", "débitos estaduais"],
     "CND Municipal": ["prefeitura", "débitos municipais", "tributos municipais"],
     "Certificado de Regularidade - CTF IBAMA": ["ctf", "ibama", "certificado de regularidade"],
     "Certificado de Regularidade IBAMA – CTF/APP": ["ctf", "ibama", "certificado de regularidade"],
     "Certificado de Regularidade do Fundo de Garantia por Tempo de Serviço – FGTS": ["fgts", "caixa econômica", "crf"],
     "RNTRC - Registro Nacional de Transportadores Rodoviários de Cargas": ["antt", "rntrc", "transportador rodoviário"],
-    "RNTRC ANTT": ["antt", "rntrc", "transportador rodoviário"],
+    "RNTRC ANTT": ["antt", "rntrc"],
     "Carteira Nacional de Habilitação (CNH)": ["cnh", "carteira nacional de habilitação", "motorista"],
     "Licenciamento do Veículo (CRLV)": ["crlv", "licenciamento", "detran", "veículo"],
     "AATIPP - Autorização para o Transporte Interestadual de Produtos Perigosos": ["aatipp", "produtos perigosos", "autorização"],
-    "Licença ou Certificado Ambiental Estadual para Transporte de Produto/Resíduo Perigoso": ["licença ambiental", "transporte de resíduos perigosos", "certificado ambiental"],
-    "Seguro Ambiental de Carga ou Plano de Atendimento a Emergência (PAE)": ["pae", "plano de atendimento", "seguro ambiental", "emergência"],
-    "Plano de Atendimento a Emergências – PAE": ["pae", "plano de atendimento", "emergências"],
+    "Licença ou Certificado Ambiental Estadual para Transporte de Produto/Resíduo Perigoso": ["licença ambiental", "transporte de resíduos perigosos"],
+    "Seguro Ambiental de Carga ou Plano de Atendimento a Emergência (PAE)": ["pae", "plano de atendimento", "seguro ambiental"],
+    "Plano de Atendimento a Emergências – PAE": ["pae", "plano de atendimento"],
     "Amostragem de Treinamento - MOPP": ["mopp", "produtos perigosos", "treinamento"],
     "ISO 14001": ["14001", "gestão ambiental"],
     "ISO 9001": ["9001", "gestão da qualidade"],
     "Ficha de Emergência": ["ficha de emergência", "emergencia"],
-    "Relatório de Passivo Ambiental ou Infração Ambiental": ["passivo ambiental", "infração ambiental", "relatório"],
-    "Termo LGPD": ["lgpd", "proteção de dados", "termo"]
+    "Relatório de Passivo Ambiental ou Infração Ambiental": ["passivo ambiental", "infração ambiental"],
+    "Termo LGPD": ["lgpd", "proteção de dados"]
 }
 
-# MAPA DE DEDUPLICAÇÃO PARA EXIBIÇÃO SEM REPETIÇÕES NA ANÁLISE PONTUAL
 PADRONIZACAO_ANALISE_PONTUAL = {
     "Comprovante de Inscrição e de Situação Cadastral – CNPJ": "Cartão CNPJ",
     "Inscrição Estadual": "Inscrição Estadual Ativa",
@@ -358,7 +323,6 @@ PADRONIZACAO_ANALISE_PONTUAL = {
     "CND Municipal": "CND Federal, Estadual e Municipal",
 }
 
-# Gerar lista perfeitamente única e ordenada para a caixa de seleção
 DOCUMENTOS_PONTUAL_UNICO = sorted(list(set(
     PADRONIZACAO_ANALISE_PONTUAL.get(doc, doc)
     for cat_data in REQUISITOS.values()
@@ -367,7 +331,7 @@ DOCUMENTOS_PONTUAL_UNICO = sorted(list(set(
 )))
 
 # ==============================================================================
-# 4. LEITURA DE PDFS, ZIPS & EXTRAÇÃO INTELIGENTE DE DADOS
+# 4. MOTOR DE ANÁLISE EM 5 CAMADAS & EXTRAÇÃO DE DADOS
 # ==============================================================================
 
 def extrair_texto_pdf(file_bytes):
@@ -441,18 +405,39 @@ def identificar_enquadramentos_cnae(cnaes_encontrados):
             enquadramentos[cat].append(f"{cnae} - {desc}")
     return enquadramentos
 
-def validar_presenca_documento(nome_doc, texto_acumulado, cnpjs_unicos):
+def executar_analise_5_camadas(nome_doc, texto_acumulado, cnpjs_unicos, cnaes_unicos, categoria_selecionada, datas_vencimento):
     """
-    Verifica se um documento está presente no texto do lote
-    usando busca por palavras-chave flexíveis e validação de CNPJ.
+    Executa as 5 camadas funcionais de checagem documental e cruzamento de dados.
     """
+    # Camada 1: Identificação
+    presente = False
     if "CNPJ" in nome_doc and len(cnpjs_unicos) > 0:
-        return True
+        presente = True
+    else:
+        texto_lower = texto_acumulado.lower()
+        chaves = PALAVRAS_CHAVE_DOCS.get(nome_doc, [nome_doc.lower().split()[0]])
+        presente = any(chave in texto_lower for chave in chaves)
 
-    texto_lower = texto_acumulado.lower()
-    chaves = PALAVRAS_CHAVE_DOCS.get(nome_doc, [nome_doc.lower().split()[0]])
+    if not presente:
+        return "⚪ Não Presente", "Documento não identificado no pacote anexado."
 
-    return any(chave in texto_lower for chave in chaves)
+    # Camada 2: Validade Formal
+    hoje = datetime.now()
+    datas_vencidas = [dt for dt in datas_vencimento if dt < hoje]
+    if datas_vencidas:
+        str_venc = [dt.strftime("%d/%m/%Y") for dt in datas_vencidas]
+        return "🔴 Não Conforme", f"Documento identificado, porém foi detectada data de validade vencida ({', '.join(str_venc)})."
+
+    # Camada 3: Compatibilidade Cadastral
+    if "CNPJ" in nome_doc and len(cnpjs_unicos) > 1:
+        return "🟡 Conforme com Ressalva", f"Múltiplos CNPJs identificados no lote ({', '.join(cnpjs_unicos)}). Necessária conferência de matriz/filial."
+
+    # Camada 4 & 5: Compatibilidade da Atividade e Resultado
+    enquadramentos = identificar_enquadramentos_cnae(cnaes_unicos)
+    if enquadramentos and categoria_selecionada not in enquadramentos:
+        return "🟡 Conforme com Ressalva", f"Documento válido. Porém o CNAE extraído ({', '.join(cnaes_unicos)}) difere da categoria informada ({categoria_selecionada}). Recomenda-se validação com a Licença Ambiental."
+
+    return "🟢 Conforme", "Documento validado com sucesso nas 5 camadas funcionais."
 
 # ==============================================================================
 # 5. INTERFACE DO USUÁRIO (STREAMLIT)
@@ -474,7 +459,7 @@ if menu == "Central de Análises":
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<div class="sub-header">Identificação automática de CNAE e validação de compliance | Yattó</div>',
+        '<div class="sub-header">Identificação automática de CNAE e validação em 5 camadas | Yattó</div>',
         unsafe_allow_html=True,
     )
 
@@ -573,7 +558,7 @@ if menu == "Central de Análises":
             with col_conf2:
                 caracteristica_fornecedor = st.selectbox("Característica do Fornecedor:", ["Pessoa Jurídica (Empresa)", "Cooperativa / Associação", "Pessoa Física (Autônomo)"])
 
-            btn_emitir_parecer = st.button("🚀 Executar Análise Final de Compliance")
+            btn_emitir_parecer = st.button("🚀 Executar Análise Final em 5 Camadas")
 
             if btn_emitir_parecer:
                 st.markdown("---")
@@ -590,74 +575,57 @@ if menu == "Central de Análises":
                         if "Estatuto" not in obrigatorios_exigidos: obrigatorios_exigidos.append("Estatuto")
                         if "Última Ata de Eleição" not in obrigatorios_exigidos: obrigatorios_exigidos.append("Última Ata de Eleição")
 
-                docs_encontrados = []
+                resultados_camadas = {}
                 for doc in set(obrigatorios_exigidos + opcionais_exigidos):
-                    if validar_presenca_documento(doc, d['texto_acumulado'], d['cnpjs']):
-                        docs_encontrados.append(doc)
+                    res_status, res_msg = executar_analise_5_camadas(
+                        doc, d['texto_acumulado'], d['cnpjs'], d['cnaes'], categoria, d['datas_vencimento']
+                    )
+                    resultados_camadas[doc] = (res_status, res_msg)
 
-                hoje = datetime.now()
-                datas_vencidas = [dt for dt in d['datas_vencimento'] if dt < hoje]
-
-                obrig_entregues = [doc for doc in obrigatorios_exigidos if doc in docs_encontrados]
-                obrig_pendentes = [doc for doc in obrigatorios_exigidos if doc not in docs_encontrados]
-                opc_entregues = [doc for doc in opcionais_exigidos if doc in docs_encontrados]
+                obrig_entregues = [doc for doc in obrigatorios_exigidos if "Conforme" in resultados_camadas[doc][0]]
+                obrig_pendentes = [doc for doc in obrigatorios_exigidos if doc not in obrig_entregues]
+                opc_entregues = [doc for doc in opcionais_exigidos if "Conforme" in resultados_camadas[doc][0]]
 
                 pct_conclusao = ((len(obrig_entregues) / len(obrigatorios_exigidos)) * 100) if obrigatorios_exigidos else 0
 
-                matriz_crit = reqs.get("criticidade", {})
-                pendencias_criticas = {"Grave": [], "Médio": [], "Leve": []}
-                if matriz_crit and obrig_pendentes:
-                    for p in obrig_pendentes:
-                        if p in matriz_crit.get("🔴 Grave", []):
-                            pendencias_criticas["Grave"].append(p)
-                        elif p in matriz_crit.get("🟡 Médio", []):
-                            pendencias_criticas["Médio"].append(p)
-                        elif p in matriz_crit.get("🟢 Leve", []):
-                            pendencias_criticas["Leve"].append(p)
+                tem_nao_conforme = any("Não Conforme" in r[0] for r in resultados_camadas.values())
+                tem_ressalva = any("Ressalva" in r[0] for r in resultados_camadas.values())
 
                 if modo_analise == "Análise Pontual (Documento Avulso)":
-                    if datas_vencidas:
-                        status_final = "DOCUMENTO REPROVADO (VENCIDO)"
-                        css_status = "status-rejected"
-                    elif len(obrig_entregues) > 0:
-                        status_final = "DOCUMENTO EM CONFORMIDADE (APROVADO)"
-                        css_status = "status-approved"
-                        st.balloons()
-                    else:
-                        status_final = "DOCUMENTO NÃO IDENTIFICADO OU INCOMPLETO"
-                        css_status = "status-rejected"
+                    res_p = resultados_camadas.get(doc_especifico_selecionado, ("🔴 Não Conforme", "Incompleto"))
+                    status_final = f"STATUS: {res_p[0]}"
+                    css_status = "status-nao-conforme" if "Não" in res_p[0] else ("status-ressalva" if "Ressalva" in res_p[0] else "status-conforme")
                 else:
-                    if datas_vencidas or pendencias_criticas.get("Grave"):
-                        status_final = "REPROVADO / RISCO GRAVE"
-                        css_status = "status-rejected"
+                    if tem_nao_conforme:
+                        status_final = "STATUS: 🔴 NÃO CONFORME (INCOMPATIBILIDADE / VENCIMENTO DETECTADO)"
+                        css_status = "status-nao-conforme"
+                    elif tem_ressalva:
+                        status_final = f"STATUS: 🟡 CONFORME COM RESSALVA ({round(pct_conclusao, 1)}% Concluído)"
+                        css_status = "status-ressalva"
                     elif pct_conclusao == 100:
-                        status_final = "HOMOLOGADO / APROVADO"
-                        css_status = "status-approved"
+                        status_final = "STATUS: 🟢 HOMOLOGADO / CONFORME"
+                        css_status = "status-conforme"
                         st.balloons()
                     elif pct_conclusao > 0:
-                        status_final = "EM HOMOLOGAÇÃO PARCIAL"
-                        css_status = "status-partial"
+                        status_final = f"STATUS: 🟠 PENDENTE DE ANÁLISE ({round(pct_conclusao, 1)}% Concluído)"
+                        css_status = "status-pendente"
                     else:
-                        status_final = "AGUARDANDO DOCUMENTAÇÃO"
-                        css_status = "status-rejected"
+                        status_final = "STATUS: 🔴 NÃO CONFORME (SEM DOCUMENTAÇÃO ELEGÍVEL)"
+                        css_status = "status-nao-conforme"
 
                 st.write(f"**Fornecedor:** {razao_social or 'Não informado'}")
                 st.write(f"**Categoria:** {categoria}")
-                st.markdown(f'<div class="card-status {css_status}">STATUS: {status_final}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="card-status {css_status}">{status_final}</div>', unsafe_allow_html=True)
 
                 if modo_analise != "Análise Pontual (Documento Avulso)":
                     st.progress(pct_conclusao / 100)
-
-                if datas_vencidas:
-                    str_venc = [dt.strftime("%d/%m/%Y") for dt in datas_vencidas]
-                    st.error(f"❌ Documento(s) com data de validade VENCIDA: {', '.join(str_venc)}")
 
                 c_ent, c_pend = st.columns(2)
                 with c_ent:
                     st.markdown("#### ✅ Documentos Validados")
                     if obrig_entregues:
                         for doc in obrig_entregues:
-                            st.write(f"✓ {doc}")
+                            st.write(f"✓ {doc} ({resultados_camadas[doc][0]})")
                     else:
                         st.write("*Nenhum documento obrigatório validado.*")
 
@@ -674,36 +642,29 @@ if menu == "Central de Análises":
                     else:
                         st.write("🎉 *Nenhuma pendência documental!*")
 
-                if any(pendencias_criticas.values()):
-                    st.markdown("---")
-                    st.markdown("### 🚦 Avaliação de Criticidade das Pendências")
-                    if pendencias_criticas.get("Grave"):
-                        st.error(f"**Pendências Graves (Impedimentos):** {', '.join(pendencias_criticas['Grave'])}")
-                    if pendencias_criticas.get("Médio"):
-                        st.warning(f"**Pendências Médias (Prazo de Adequação):** {', '.join(pendencias_criticas['Médio'])}")
-                    if pendencias_criticas.get("Leve"):
-                        st.info(f"**Pendências Leves (Cadastro/Administrativo):** {', '.join(pendencias_criticas['Leve'])}")
+                st.markdown("---")
+                st.markdown("### 🔍 Justificativa Detalhada da Análise de Compliance")
+                for doc, (st_res, msg_res) in resultados_camadas.items():
+                    if "Não Presente" not in st_res:
+                        if "Ressalva" in st_res:
+                            st.warning(f"**{doc}:** {msg_res}")
+                        elif "Não Conforme" in st_res:
+                            st.error(f"**{doc}:** {msg_res}")
+                        else:
+                            st.success(f"**{doc}:** {msg_res}")
 
                 st.markdown("---")
                 st.markdown("### ✉️ Resposta Pronta para Envio")
-                if modo_analise == "Análise Pontual (Documento Avulso)":
-                    texto_email = (
-                        f"Prezados,\n\nRealizamos a verificação pontual do documento ({doc_especifico_selecionado}) referente a {razao_social or 'Parceiro'}.\n\n"
-                        f"STATUS DA VERIFICAÇÃO: {status_final}\n\n"
-                        f"Atenciosamente,\nEquipe de Compliance Yattó"
-                    )
-                else:
-                    texto_email = (
-                        f"Prezados,\n\nRecebemos a documentação de compliance de {razao_social or 'Parceiro'}.\n\n"
-                        f"STATUS DA HOMOLOGAÇÃO: {status_final} ({round(pct_conclusao, 1)}% concluído)\n\n"
-                        f"DOCUMENTOS OBRIGATÓRIOS RECEBIDOS ({len(obrig_entregues)}):\n"
-                        + "\n".join([f"- {d}" for d in obrig_entregues])
-                        + (f"\n\nDOCUMENTOS OPCIONAIS RECEBIDOS:\n" + "\n".join([f"- {d}" for d in opc_entregues]) if opc_entregues else "")
-                        + f"\n\nPENDÊNCIAS PARA CONCLUIR A HOMOLOGAÇÃO ({len(obrig_pendentes)}):\n"
-                        + "\n".join([f"- {d}" for d in obrig_pendentes])
-                        + "\n\nFicamos no aguardo dos itens pendentes para finalização do cadastro.\n\nAtenciosamente,\nEquipe de Compliance Yattó"
-                    )
-                st.text_area("Copie o texto abaixo para enviar ao parceiro:", texto_email, height=200)
+                texto_email = (
+                    f"Prezados,\n\nRecebemos a documentação de compliance de {razao_social or 'Parceiro'}.\n\n"
+                    f"RESULTADO DA ANÁLISE: {status_final}\n\n"
+                    f"DOCUMENTOS VALIDADOS ({len(obrig_entregues)}):\n"
+                    + "\n".join([f"- {d}" for d in obrig_entregues])
+                    + f"\n\nDOCUMENTOS PENDENTES ({len(obrig_pendentes)}):\n"
+                    + "\n".join([f"- {d}" for d in obrig_pendentes])
+                    + "\n\nFicamos no aguardo das adequações para finalização do cadastro.\n\nAtenciosamente,\nEquipe de Compliance Yattó"
+                )
+                st.text_area("Copie o texto abaixo para enviar ao parceiro:", texto_email, height=180)
 
         else:
             st.info("👈 Faça o upload dos arquivos e clique em 'Mapear CNPJ, CNAEs e Documentos' para iniciar a verificação.")

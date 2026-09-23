@@ -342,8 +342,25 @@ PALAVRAS_CHAVE_DOCS = {
     "Termo LGPD": ["lgpd", "proteção de dados", "termo"]
 }
 
-TODOS_DOCUMENTOS_POSSIVEIS = sorted(list(set(
-    doc
+# MAPA DE DEDUPLICAÇÃO PARA EXIBIÇÃO SEM REPETIÇÕES NA ANÁLISE PONTUAL
+PADRONIZACAO_ANALISE_PONTUAL = {
+    "Comprovante de Inscrição e de Situação Cadastral – CNPJ": "Cartão CNPJ",
+    "Inscrição Estadual": "Inscrição Estadual Ativa",
+    "Licença Ambiental": "Dispensa ou Licença Ambiental",
+    "AVCB ou CLCB": "AVCB/CLCB",
+    "Certificado de Regularidade IBAMA – CTF/APP": "Certificado de Regularidade - CTF IBAMA",
+    "Certidão Negativa de Débitos Trabalhistas – CNDT": "Certidão Negativa de Débitos Trabalhistas",
+    "Certificado de Regularidade do Fundo de Garantia por Tempo de Serviço – FGTS": "Certificado de Regularidade do FGTS",
+    "Plano de Atendimento a Emergências – PAE": "Seguro Ambiental de Carga ou Plano de Atendimento a Emergência (PAE)",
+    "RNTRC ANTT": "RNTRC - Registro Nacional de Transportadores Rodoviários de Cargas",
+    "CND Federal": "CND Federal, Estadual e Municipal",
+    "CND Estadual": "CND Federal, Estadual e Municipal",
+    "CND Municipal": "CND Federal, Estadual e Municipal",
+}
+
+# Gerar lista perfeitamente única e ordenada para a caixa de seleção
+DOCUMENTOS_PONTUAL_UNICO = sorted(list(set(
+    PADRONIZACAO_ANALISE_PONTUAL.get(doc, doc)
     for cat_data in REQUISITOS.values()
     for lista_docs in [cat_data.get("obrigatorios", []), cat_data.get("opcionais", [])]
     for doc in lista_docs
@@ -481,7 +498,7 @@ if menu == "Central de Análises":
         if modo_analise == "Análise Pontual (Documento Avulso)":
             doc_especifico_selecionado = st.selectbox(
                 "Escolha o documento a ser verificado:",
-                TODOS_DOCUMENTOS_POSSIVEIS
+                DOCUMENTOS_PONTUAL_UNICO
             )
 
         razao_social = st.text_input(
@@ -715,7 +732,7 @@ elif menu == "Matriz de Requisitos Yattó":
                     )
 
 elif menu == "Sobre o Decreto 12.688/2025":
-    st.title("Segurança Jurídica")
+    st.title("Segurança Jurídica & Decreto nº 12.688/2025")
     st.write(
         "A Yattó atua como infraestrutura de soluções em economia circular oferecendo diagnósticos, inteligência de dados e execução operacional contínua."
     )

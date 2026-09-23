@@ -171,10 +171,8 @@ REQUISITOS = {
             "Dispensa ou Licença Ambiental",
             "Estatuto",
             "Última Ata de Eleição",
-            "Certidão Negativa de Débitos Trabalhistas (CNDT)",
-            "CND Federal",
-            "CND Estadual",
-            "CND Municipal"
+            "Certidão Negativa de Débitos Trabalhistas",
+            "CND Federal, Estadual e Municipal"
         ],
         "opcionais": [
             "AVCB/CLCB",
@@ -203,7 +201,7 @@ REQUISITOS = {
             "Inscrição Estadual Ativa",
             "Alvará de Funcionamento",
             "Dispensa ou Licença Ambiental",
-            "RNTRC ANTT",
+            "RNTRC - Registro Nacional de Transportadores Rodoviários de Cargas",
             "Carteira Nacional de Habilitação (CNH)",
             "Licenciamento do Veículo (CRLV)"
         ],
@@ -214,7 +212,7 @@ REQUISITOS = {
         "obrigatorios": [
             "Carteira Nacional de Habilitação (CNH)",
             "Licenciamento do Veículo (CRLV)",
-            "RNTRC ANTT",
+            "RNTRC - Registro Nacional de Transportadores Rodoviários de Cargas",
             "Termo LGPD"
         ],
         "opcionais": [],
@@ -226,18 +224,18 @@ REQUISITOS = {
             "Inscrição Estadual Ativa",
             "Alvará de Funcionamento",
             "Certificado de Regularidade - CTF IBAMA",
-            "AATIPP",
-            "Licença ou Certificado Ambiental Estadual",
-            "RNTRC ANTT",
-            "Seguro Ambiental de Carga / PAE",
-            "Amostragem de Treinamento MOPP",
+            "AATIPP - Autorização para o Transporte Interestadual de Produtos Perigosos",
+            "Licença ou Certificado Ambiental Estadual para Transporte de Produto/Resíduo Perigoso",
+            "RNTRC - Registro Nacional de Transportadores Rodoviários de Cargas",
+            "Seguro Ambiental de Carga ou Plano de Atendimento a Emergência (PAE)",
+            "Amostragem de Treinamento - MOPP",
             "Licenciamento do Veículo (CRLV)"
         ],
         "opcionais": [
             "ISO 14001",
             "ISO 9001",
             "Ficha de Emergência",
-            "Relatório de Passivo Ambiental / Infração Ambiental"
+            "Relatório de Passivo Ambiental ou Infração Ambiental"
         ],
         "criticidade": {}
     },
@@ -245,16 +243,16 @@ REQUISITOS = {
         "obrigatorios": [
             "Alvará de Funcionamento",
             "Licença Sanitária",
-            "AVCB/CLCB",
-            "Dispensa ou Licença Ambiental",
-            "Cartão CNPJ",
-            "Inscrição Estadual Ativa",
-            "Certificado de Regularidade - CTF IBAMA",
+            "AVCB ou CLCB",
+            "Licença Ambiental",
+            "Comprovante de Inscrição e de Situação Cadastral – CNPJ",
+            "Inscrição Estadual",
+            "Certificado de Regularidade IBAMA – CTF/APP",
             "CND Federal",
             "CND Estadual",
             "CND Municipal",
-            "Certidão Negativa de Débitos Trabalhistas (CNDT)",
-            "Certificado de Regularidade do FGTS",
+            "Certidão Negativa de Débitos Trabalhistas – CNDT",
+            "Certificado de Regularidade do Fundo de Garantia por Tempo de Serviço – FGTS",
             "PGR – Plano de Gerenciamento de Riscos",
             "PCMSO – Programa de Controle Médico de Saúde Ocupacional",
             "Ficha de Entrega de EPI’s",
@@ -262,30 +260,30 @@ REQUISITOS = {
             "Relatório de Inspeção de Caldeiras",
             "Certificado de Treinamento de Segurança na Operação de Caldeiras – NR 13",
             "Certificado de Destinação Final da Borra Orgânica",
-            "Seguro Ambiental de Carga / PAE"
+            "Plano de Atendimento a Emergências – PAE"
         ],
         "opcionais": [
             "Nota Fiscal de Venda do Óleo",
             "Certificado de Destinação do PET para Reciclagem",
             "Comprovante de Medidas Preventivas e Corretivas de Controle de Pragas",
-            "Certificado de Treinamento (NR01, NR06 e/ou NR12)"
+            "Certificado de Treinamento – NR01, NR06 e/ou NR12"
         ],
         "criticidade": {
             "🔴 Grave": [
                 "Alvará de Funcionamento",
                 "Licença Sanitária",
-                "AVCB/CLCB",
-                "Dispensa ou Licença Ambiental",
-                "Cartão CNPJ",
-                "Inscrição Estadual Ativa",
-                "Certificado de Regularidade - CTF IBAMA"
+                "AVCB ou CLCB",
+                "Licença Ambiental",
+                "Comprovante de Inscrição e de Situação Cadastral – CNPJ",
+                "Inscrição Estadual",
+                "Certificado de Regularidade IBAMA – CTF/APP"
             ],
             "🟡 Médio": [
                 "CND Federal",
                 "CND Estadual",
                 "CND Municipal",
-                "Certidão Negativa de Débitos Trabalhistas (CNDT)",
-                "Certificado de Regularidade do FGTS",
+                "Certidão Negativa de Débitos Trabalhistas – CNDT",
+                "Certificado de Regularidade do Fundo de Garantia por Tempo de Serviço – FGTS",
                 "PGR – Plano de Gerenciamento de Riscos",
                 "PCMSO – Programa de Controle Médico de Saúde Ocupacional",
                 "Ficha de Entrega de EPI’s",
@@ -293,13 +291,13 @@ REQUISITOS = {
                 "Relatório de Inspeção de Caldeiras",
                 "Certificado de Treinamento de Segurança na Operação de Caldeiras – NR 13",
                 "Certificado de Destinação Final da Borra Orgânica",
-                "Seguro Ambiental de Carga / PAE"
+                "Plano de Atendimento a Emergências – PAE"
             ],
             "🟢 Leve": [
                 "Nota Fiscal de Venda do Óleo",
                 "Certificado de Destinação do PET para Reciclagem",
                 "Comprovante de Medidas Preventivas e Corretivas de Controle de Pragas",
-                "Certificado de Treinamento (NR01, NR06 e/ou NR12)"
+                "Certificado de Treinamento – NR01, NR06 e/ou NR12"
             ]
         }
     }
@@ -308,27 +306,40 @@ REQUISITOS = {
 # PALAVRAS-CHAVE FLEXÍVEIS PARA DETECÇÃO EM TEXTOS PDF
 PALAVRAS_CHAVE_DOCS = {
     "Cartão CNPJ": ["cnpj", "comprovante de inscrição", "receita federal", "situação cadastral"],
+    "Comprovante de Inscrição e de Situação Cadastral – CNPJ": ["cnpj", "comprovante de inscrição", "receita federal", "situação cadastral"],
     "Inscrição Estadual Ativa": ["inscrição estadual", "sintegra", "ie ativa", "inscrição no cadastro de contribuintes"],
+    "Inscrição Estadual": ["inscrição estadual", "sintegra", "ie ativa", "inscrição no cadastro de contribuintes"],
     "Alvará de Funcionamento": ["alvará", "alvara", "licença de funcionamento", "alvará de licença"],
     "Dispensa ou Licença Ambiental": ["licença ambiental", "licenca ambiental", "cetesb", "ibama", "dispensa de licença", "cadri", "operacao", "instalacao"],
+    "Licença Ambiental": ["licença ambiental", "licenca ambiental", "cetesb", "ibama", "dispensa de licença", "cadri"],
     "Licença Sanitária": ["sanitária", "sanitaria", "vigilância sanitária", "visa"],
     "AVCB/CLCB": ["avcb", "clcb", "bombeiros", "corpo de bombeiros", "vistoria"],
+    "AVCB ou CLCB": ["avcb", "clcb", "bombeiros", "corpo de bombeiros", "vistoria"],
     "Estatuto": ["estatuto", "estatuto social", "cooperativa"],
     "Última Ata de Eleição": ["ata", "ata de eleição", "eleicao", "assembleia"],
-    "Certidão Negativa de Débitos Trabalhistas (CNDT)": ["cndt", "trabalhistas", "justiça do trabalho"],
+    "Certidão Negativa de Débitos Trabalhistas": ["cndt", "trabalhistas", "justiça do trabalho"],
+    "Certidão Negativa de Débitos Trabalhistas – CNDT": ["cndt", "trabalhistas", "justiça do trabalho"],
+    "CND Federal, Estadual e Municipal": ["receita federal", "sefaz", "prefeitura", "débitos", "certidão conjunta"],
     "CND Federal": ["receita federal", "débitos relativos a tributos federais", "certidão conjunta"],
     "CND Estadual": ["fazenda estadual", "sefaz", "débitos estaduais"],
     "CND Municipal": ["prefeitura", "débitos municipais", "tributos municipais"],
     "Certificado de Regularidade - CTF IBAMA": ["ctf", "ibama", "certificado de regularidade"],
-    "Certificado de Regularidade do FGTS": ["fgts", "caixa econômica", "crf"],
+    "Certificado de Regularidade IBAMA – CTF/APP": ["ctf", "ibama", "certificado de regularidade"],
+    "Certificado de Regularidade do Fundo de Garantia por Tempo de Serviço – FGTS": ["fgts", "caixa econômica", "crf"],
+    "RNTRC - Registro Nacional de Transportadores Rodoviários de Cargas": ["antt", "rntrc", "transportador rodoviário"],
     "RNTRC ANTT": ["antt", "rntrc", "transportador rodoviário"],
     "Carteira Nacional de Habilitação (CNH)": ["cnh", "carteira nacional de habilitação", "motorista"],
     "Licenciamento do Veículo (CRLV)": ["crlv", "licenciamento", "detran", "veículo"],
-    "PGR – Plano de Gerenciamento de Riscos": ["pgr", "gerenciamento de riscos"],
-    "PCMSO – Programa de Controle Médico de Saúde Ocupacional": ["pcmso", "saúde ocupacional"],
-    "Atestados de Saúde Ocupacional – ASO": ["aso", "atestado de saúde"],
-    "Ficha de Entrega de EPI’s": ["epi", "equipamento de proteção"],
-    "Seguro Ambiental de Carga / PAE": ["pae", "plano de atendimento", "seguro ambiental"]
+    "AATIPP - Autorização para o Transporte Interestadual de Produtos Perigosos": ["aatipp", "produtos perigosos", "autorização"],
+    "Licença ou Certificado Ambiental Estadual para Transporte de Produto/Resíduo Perigoso": ["licença ambiental", "transporte de resíduos perigosos", "certificado ambiental"],
+    "Seguro Ambiental de Carga ou Plano de Atendimento a Emergência (PAE)": ["pae", "plano de atendimento", "seguro ambiental", "emergência"],
+    "Plano de Atendimento a Emergências – PAE": ["pae", "plano de atendimento", "emergências"],
+    "Amostragem de Treinamento - MOPP": ["mopp", "produtos perigosos", "treinamento"],
+    "ISO 14001": ["14001", "gestão ambiental"],
+    "ISO 9001": ["9001", "gestão da qualidade"],
+    "Ficha de Emergência": ["ficha de emergência", "emergencia"],
+    "Relatório de Passivo Ambiental ou Infração Ambiental": ["passivo ambiental", "infração ambiental", "relatório"],
+    "Termo LGPD": ["lgpd", "proteção de dados", "termo"]
 }
 
 TODOS_DOCUMENTOS_POSSIVEIS = sorted(list(set(
@@ -418,7 +429,7 @@ def validar_presenca_documento(nome_doc, texto_acumulado, cnpjs_unicos):
     Verifica se um documento está presente no texto do lote
     usando busca por palavras-chave flexíveis e validação de CNPJ.
     """
-    if nome_doc == "Cartão CNPJ" and len(cnpjs_unicos) > 0:
+    if "CNPJ" in nome_doc and len(cnpjs_unicos) > 0:
         return True
 
     texto_lower = texto_acumulado.lower()
@@ -534,7 +545,6 @@ if menu == "Central de Análises":
             st.markdown("---")
             col_conf1, col_conf2 = st.columns(2)
             
-            # Pré-selecionar categoria automaticamente se o CNAE tiver mapeado uma única opção
             index_default_cat = 0
             if d['enquadramentos']:
                 primeira_cat = list(d['enquadramentos'].keys())[0]
@@ -705,7 +715,7 @@ elif menu == "Matriz de Requisitos Yattó":
                     )
 
 elif menu == "Sobre o Decreto 12.688/2025":
-    st.title("Segurança Jurídica & Decreto nº 12.688/2025")
+    st.title("Segurança Jurídica")
     st.write(
         "A Yattó atua como infraestrutura de soluções em economia circular oferecendo diagnósticos, inteligência de dados e execução operacional contínua."
     )
